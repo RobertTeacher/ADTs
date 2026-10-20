@@ -1,91 +1,93 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Unit 19 Big O Reference</title>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 19 Big O Studio</title>
 <style>
-:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--accent:#3b66d1;--accent2:#e2eaff}
-@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--accent:#7fa3ff;--accent2:#1b2747;color-scheme:dark}}
-*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:14px}.wrap{max-width:1200px;margin:auto;display:flex;flex-direction:column;gap:12px}h1{margin:0;font-size:1.75rem}.sub{margin:4px 0 0;color:var(--muted)}.note{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;padding:10px 12px;color:var(--muted)}.note strong{color:var(--ink)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:auto}table{border-collapse:collapse;width:100%;min-width:880px}th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--accent2);position:sticky;top:0}td code{font-family:Consolas,monospace}.group{font-weight:700}.small{font-size:12.5px;color:var(--muted)}
+:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--blue:#3b66d1;--blue2:#e7edff;--orange:#e08a00;--orange2:#fff0cc;--green:#0d8a7c;--green2:#d9f4ef;--red:#b84a4a;--red2:#fae2e2;--code:#f7f8fc;--shadow:0 1px 2px rgba(20,30,50,.05),0 10px 30px rgba(20,30,50,.055)}
+@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--blue:#7fa3ff;--blue2:#1b2747;--orange:#f2b84b;--orange2:#3d3112;--green:#3cc4b2;--green2:#123631;--red:#ff8a8a;--red2:#3b2020;--code:#111823;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:12px}.wrap{max-width:1260px;margin:auto;display:flex;flex-direction:column;gap:12px}.panel,.hero-card,.note{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:12px}.hero-card,.studio{padding:14px}h1{margin:0 0 4px;font-size:clamp(1.55rem,3vw,2.05rem)}.sub{margin:0;color:var(--muted)}.kicker{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px}.growth-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}.growth{border:1px solid var(--line);background:var(--code);border-radius:11px;padding:10px}.growth strong{display:block;font:700 18px Consolas,monospace}.growth span{font-size:12px;color:var(--muted)}.growth.c1{border-top:4px solid var(--green)}.growth.clog{border-top:4px solid var(--blue)}.growth.cn{border-top:4px solid var(--orange)}.growth.cn2{border-top:4px solid var(--red)}.doubling{display:grid;grid-template-columns:auto 1fr;gap:5px 10px;margin:12px 0 0;font-size:13px}.doubling dt{color:var(--muted)}.doubling dd{margin:0;font-weight:700}.studio-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.studio h2{margin:0;font-size:1rem}.control{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}.control input{accent-color:var(--blue);width:165px}.bars{display:grid;gap:9px;margin-top:12px}.row{display:grid;grid-template-columns:75px 1fr 90px;gap:8px;align-items:center}.lab{font:700 13px Consolas,monospace}.track{height:16px;background:var(--code);border:1px solid var(--line);border-radius:999px;overflow:hidden}.fill{height:100%;border-radius:999px;min-width:5px;transition:width .18s}.f1{background:var(--green)}.flog{background:var(--blue)}.fn{background:var(--orange)}.fn2{background:var(--red)}.val{text-align:right;font:12px Consolas,monospace;color:var(--muted)}.scale{font-size:11.5px;color:var(--muted);margin:9px 0 0}.sections{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.topic{padding:12px}.topic h2{margin:0 0 4px;font-size:1rem}.tagline{margin:0 0 9px;color:var(--muted);font-size:12.5px}.item{display:grid;grid-template-columns:1fr auto;gap:8px;padding:9px 0;border-top:1px solid var(--line)}.item:first-of-type{border-top:0}.item strong{display:block}.item small{display:block;color:var(--muted);margin-top:2px}.badge{font:700 12px Consolas,monospace;padding:4px 7px;border-radius:999px;background:var(--blue2);color:var(--blue);white-space:nowrap}.note{padding:11px 13px;border-left:5px solid var(--orange);color:var(--muted)}.note strong{color:var(--ink)}details.panel{overflow:hidden}details summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:800;display:flex;justify-content:space-between;gap:8px}details summary::-webkit-details-marker{display:none}details summary::after{content:"+";font-size:20px;color:var(--muted)}details[open] summary::after{content:"−"}.table-wrap{overflow:auto;border-top:1px solid var(--line)}table{border-collapse:collapse;width:100%;min-width:900px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--code);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.em{font-weight:700}@media(max-width:900px){.hero,.sections{grid-template-columns:1fr}}@media(max-width:600px){body{padding:7px}.growth-grid{grid-template-columns:repeat(2,1fr)}.row{grid-template-columns:66px 1fr 72px}.control input{width:120px}}@media(prefers-reduced-motion:reduce){.fill{transition:none}}
 </style>
-<style id="unit19-polish">
-:root{
-  --u19-radius:14px;
-  --u19-radius-sm:10px;
-  --u19-shadow:0 1px 2px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.045);
-}
-body{
-  padding:12px max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));
-}
-.wrap{max-width:1380px;gap:12px}
-.panel,.card,.info,.note,.complexity,.ctl{
-  border-radius:var(--u19-radius)!important;
-  box-shadow:var(--u19-shadow);
-}
-.tabs{
-  border-radius:12px!important;
-  padding:4px!important;
-  gap:4px!important;
-}
-.tabs button{
-  min-height:40px;
-  line-height:1.15;
-  white-space:nowrap;
-}
-.tabs button[aria-selected="true"]{
-  box-shadow:0 1px 2px rgba(0,0,0,.12);
-}
-.ctl{
-  position:sticky;
-  top:6px;
-  z-index:12;
-  backdrop-filter:blur(8px);
-}
-.code{
-  border:1px solid var(--line);
-  scrollbar-width:thin;
-}
-.caption{
-  border-left:4px solid var(--cur)!important;
-}
-.ptitle,.pt{
-  min-height:18px;
-  align-items:center;
-}
-table{line-height:1.35}
-button,input{touch-action:manipulation}
-@media(max-width:900px){
-  .grid{gap:10px!important}
-  .panel{padding:10px!important}
-  .tabs{width:100%}
-  .tabs button{flex:1 1 auto}
-}
-@media(max-width:560px){
-  body{padding-left:7px;padding-right:7px}
-  .ctl{top:2px;gap:5px!important;padding:7px!important}
-  .ctl button{min-width:40px!important;padding:6px 9px!important}
-  .tabs button{font-size:13px!important;padding:7px 9px!important}
-}
-</style>
+</head>
+<body><div class="wrap">
+<section class="hero">
+  <div class="hero-card">
+    <div class="kicker">Growth, not stopwatch time</div>
+    <h1>Big O Studio</h1>
+    <p class="sub">Big O describes how time or extra memory grows as the input size <code>n</code> increases.</p>
+    <div class="growth-grid">
+      <div class="growth c1"><strong>O(1)</strong><span>constant</span></div>
+      <div class="growth clog"><strong>O(log n)</strong><span>halving / narrowing</span></div>
+      <div class="growth cn"><strong>O(n)</strong><span>one full pass</span></div>
+      <div class="growth cn2"><strong>O(n²)</strong><span>nested growth</span></div>
+    </div>
+    <dl class="doubling"><dt>If n doubles…</dt><dd>O(1): roughly unchanged</dd><dt></dt><dd>O(log n): grows very slowly</dd><dt></dt><dd>O(n): about 2× work</dd><dt></dt><dd>O(n²): about 4× work</dd></dl>
+  </div>
+  <div class="panel studio">
+    <div class="studio-head"><h2>Growth snapshot</h2><label class="control">n = <strong id="nValue">32</strong><input id="nSlider" type="range" min="8" max="128" step="8" value="32"></label></div>
+    <div class="bars">
+      <div class="row"><span class="lab">O(1)</span><div class="track"><div id="b1" class="fill f1"></div></div><span id="v1" class="val"></span></div>
+      <div class="row"><span class="lab">O(log n)</span><div class="track"><div id="blog" class="fill flog"></div></div><span id="vlog" class="val"></span></div>
+      <div class="row"><span class="lab">O(n)</span><div class="track"><div id="bn" class="fill fn"></div></div><span id="vn" class="val"></span></div>
+      <div class="row"><span class="lab">O(n²)</span><div class="track"><div id="bn2" class="fill fn2"></div></div><span id="vn2" class="val"></span></div>
+    </div>
+    <p class="scale">Numbers are growth models, not measured execution times. Bar width uses logarithmic display scaling so all classes remain visible.</p>
+  </div>
+</section>
 
-</head><body><div class="wrap">
-<div><h1>Big O Reference — Unit 19</h1><p class="sub">Use Big O to describe growth as the input size increases. It is not an exact running time.</p></div>
-<div class="note"><strong>Important:</strong> complexity depends on the implementation. For example, an optimised bubble sort with an early-exit flag can have best-case O(n), while a fixed two-loop version remains O(n²) even on already sorted data. For trees, use <code>h</code> for tree height when discussing recursive stack space.</div>
-<div class="panel"><table>
-<thead><tr><th>Structure / algorithm</th><th>Operation</th><th>Best</th><th>Average</th><th>Worst</th><th>Extra / auxiliary space</th><th>Exam note</th></tr></thead>
+<section class="sections">
+  <div class="panel topic"><h2>Searching & Sorting</h2><p class="tagline">The main Unit 19 complexity comparisons.</p>
+    <div class="item"><div><strong>Linear search</strong><small>Best O(1), average/worst O(n)</small></div><span class="badge">O(n)</span></div>
+    <div class="item"><div><strong>Binary search</strong><small>Average/worst O(log n); sorted data required</small></div><span class="badge">O(log n)</span></div>
+    <div class="item"><div><strong>Bubble sort</strong><small>Optimised best O(n), average/worst O(n²)</small></div><span class="badge">O(n²)</span></div>
+    <div class="item"><div><strong>Insertion sort</strong><small>Best O(n), average/worst O(n²)</small></div><span class="badge">O(n²)</span></div>
+  </div>
+  <div class="panel topic"><h2>ADTs & Trees</h2><p class="tagline">Complexity follows the structure and representation.</p>
+    <div class="item"><div><strong>Stack push / pop</strong><small>Array + pointer</small></div><span class="badge">O(1)</span></div>
+    <div class="item"><div><strong>Queue enqueue / dequeue</strong><small>Circular array + pointers</small></div><span class="badge">O(1)</span></div>
+    <div class="item"><div><strong>Linked-list find</strong><small>Sequential pointer traversal</small></div><span class="badge">O(n)</span></div>
+    <div class="item"><div><strong>BST search / insert</strong><small>Average O(log n), worst O(n) if unbalanced</small></div><span class="badge">O(log n)*</span></div>
+  </div>
+  <div class="panel topic"><h2>Recursion & Space</h2><p class="tagline">Recursion adds call-stack memory.</p>
+    <div class="item"><div><strong>Recursive binary search</strong><small>Time O(log n), stack O(log n)</small></div><span class="badge">stack</span></div>
+    <div class="item"><div><strong>Recursive insertion sort</strong><small>Time O(n²), stack O(n)</small></div><span class="badge">stack</span></div>
+    <div class="item"><div><strong>Tree traversal</strong><small>Visit every node once; stack O(h)</small></div><span class="badge">O(n)</span></div>
+    <div class="item"><div><strong>Simple n-step recursion</strong><small>Countdown / sum pattern</small></div><span class="badge">O(n)</span></div>
+  </div>
+</section>
+
+<div class="note"><strong>Exam habit:</strong> state what Big O refers to. Example: “binary search has O(log n) time complexity” or “recursive traversal uses O(h) auxiliary call-stack space.” Do not write “O(n) means n seconds”.</div>
+
+<details class="panel">
+<summary>Detailed Unit 19 reference table <span style="font-size:12px;color:var(--muted);font-weight:400">expand when revising</span></summary>
+<div class="table-wrap"><table>
+<thead><tr><th>Structure / algorithm</th><th>Operation</th><th>Best</th><th>Average</th><th>Worst</th><th>Auxiliary space</th><th>Exam note</th></tr></thead>
 <tbody>
-<tr><td class="group">Linear search</td><td>Find target</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(1) iterative</td><td>Works on unsorted data.</td></tr>
-<tr><td class="group">Binary search</td><td>Find target</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>O(1) iterative / O(log n) recursive</td><td>Requires sorted data and correct bound updates.</td></tr>
-<tr><td class="group">Bubble sort (optimised)</td><td>Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Early exit only improves best case if the algorithm actually checks for no swaps.</td></tr>
-<tr><td class="group">Insertion sort</td><td>Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Performs well when data is already nearly sorted.</td></tr>
-<tr><td class="group">Recursive insertion sort</td><td>Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(n) call stack</td><td>Time is still dominated by insertion; recursion adds stack space.</td></tr>
-<tr><td class="group">Stack</td><td>Push / Pop</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>O(n) storage</td><td>Array-pointer implementation gives constant-time top operations.</td></tr>
-<tr><td class="group">Circular queue</td><td>Enqueue / Dequeue</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>O(n) storage</td><td>Pointer wrap-around does not change asymptotic time.</td></tr>
-<tr><td class="group">Linked list</td><td>Insert at front</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>O(n) storage</td><td>Only a small number of pointers change.</td></tr>
-<tr><td class="group">Linked list</td><td>Find / remove by value</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(1) extra</td><td>Must follow pointers sequentially until found or end reached.</td></tr>
-<tr><td class="group">Binary search tree</td><td>Search / insert</td><td>O(1)</td><td>O(log n)</td><td>O(n)</td><td>O(h) if recursive</td><td>Worst case occurs when the tree becomes highly unbalanced.</td></tr>
-<tr><td class="group">Binary tree traversal</td><td>Pre / In / Post order</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(h) recursive stack</td><td>Every node is visited once.</td></tr>
-<tr><td class="group">Dictionary — hash table</td><td>Insert / find / delete</td><td>O(1)</td><td>O(1)</td><td>O(n)</td><td>O(n) storage</td><td>Implementation-dependent; collision behaviour matters.</td></tr>
-<tr><td class="group">Graph — adjacency list</td><td>BFS / DFS <span class="small">(enrichment)</span></td><td>—</td><td>O(V+E)</td><td>O(V+E)</td><td>O(V)</td><td>Graph code is not required by the Unit 19 syllabus point, but this complexity is useful enrichment.</td></tr>
-<tr><td class="group">Simple recursion</td><td>Countdown / sum 1..n</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n) call stack</td><td>Each call must move toward a terminating base case.</td></tr>
+<tr><td class="em">Linear search</td><td>Find</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(1)</td><td>Works on unsorted data.</td></tr>
+<tr><td class="em">Binary search</td><td>Find</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>O(1) iterative / O(log n) recursive</td><td>Requires sorted data.</td></tr>
+<tr><td class="em">Bubble sort (optimised)</td><td>Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Best case improves only with early termination.</td></tr>
+<tr><td class="em">Insertion sort</td><td>Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Strong on nearly sorted data.</td></tr>
+<tr><td class="em">Stack</td><td>Push / Pop</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>O(n) storage</td><td>Top operations are constant time.</td></tr>
+<tr><td class="em">Circular queue</td><td>Enqueue / Dequeue</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>O(n) storage</td><td>Wrap-around does not change Big O.</td></tr>
+<tr><td class="em">Linked list</td><td>Find / remove by value</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(1) extra</td><td>Follow pointers sequentially.</td></tr>
+<tr><td class="em">Binary search tree</td><td>Search / insert</td><td>O(1)</td><td>O(log n)</td><td>O(n)</td><td>O(h) recursive</td><td>Unbalanced trees give the worst case.</td></tr>
+<tr><td class="em">Tree traversal</td><td>Pre / In / Post</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(h)</td><td>Every node is visited once.</td></tr>
+<tr><td class="em">Dictionary — hash table</td><td>Insert / find / delete</td><td>O(1)</td><td>O(1)</td><td>O(n)</td><td>O(n) storage</td><td>Implementation-dependent.</td></tr>
+<tr><td class="em">Graph — adjacency list</td><td>BFS / DFS (enrichment)</td><td>—</td><td>O(V+E)</td><td>O(V+E)</td><td>O(V)</td><td>Useful enrichment.</td></tr>
 </tbody></table></div>
-<div class="note"><strong>Exam language:</strong> say what resource Big O refers to — time or extra memory. Do not write “O(n) means n seconds”. Big O describes how resource use grows as <code>n</code> grows.</div>
-</div></body></html>
+</details>
+</div>
+<script>
+(()=>{
+ const slider=document.getElementById("nSlider");
+ const groups={one:[b1,v1],log:[blog,vlog],lin:[bn,vn],sq:[bn2,vn2]};
+ function fmt(x){return x>=10000?Math.round(x/1000)+"k":String(Math.round(x*10)/10)}
+ function render(){
+   const n=Number(slider.value),vals={one:1,log:Math.log2(n),lin:n,sq:n*n};
+   nValue.textContent=n; const max=Math.log10(vals.sq+1);
+   Object.entries(vals).forEach(([k,v])=>{groups[k][0].style.width=Math.max(5,(Math.log10(v+1)/max)*100)+"%";groups[k][1].textContent="≈ "+fmt(v)});
+ }
+ slider.addEventListener("input",render);render();
+})();
+</script>
+</body></html>
