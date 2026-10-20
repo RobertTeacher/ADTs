@@ -125,6 +125,37 @@ button,input{touch-action:manipulation}
 @media(max-width:620px){.cell{width:62px;min-height:76px}.arr{gap:5px}}
 </style>
 
+
+<style id="python-syntax-colors">
+:root{
+  --py-key:#8a3fb8;
+  --py-fn:#1f6fb5;
+  --py-num:#b0521b;
+  --py-str:#0b7a5a;
+  --py-comment:#778196;
+  --py-op:#9a5c00;
+  --py-literal:#a13f72;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --py-key:#d29bff;
+    --py-fn:#6db8ff;
+    --py-num:#ff9e64;
+    --py-str:#69d7a7;
+    --py-comment:#7f8ba2;
+    --py-op:#f0b440;
+    --py-literal:#ff91c8;
+  }
+}
+.tok-key{color:var(--py-key);font-weight:700}
+.tok-fn{color:var(--py-fn);font-weight:600}
+.tok-num{color:var(--py-num)}
+.tok-str{color:var(--py-str)}
+.tok-comment{color:var(--py-comment);font-style:italic}
+.tok-op{color:var(--py-op)}
+.tok-lit{color:var(--py-literal);font-weight:600}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -179,6 +210,63 @@ button,input{touch-action:manipulation}
 (()=>{
 const root=document.querySelector(".wrap"); if(root.dataset.ready==="1")return; root.dataset.ready="1";
 const $=id=>document.getElementById(id);
+
+const PY_KEYWORDS=new Set([
+  "def","return","if","elif","else","for","while","in","global","and","or","not",
+  "class","try","except","finally","raise","break","continue","pass","from","import","as"
+]);
+const PY_LITERALS=new Set(["True","False","None"]);
+const PY_FUNCTIONS=new Set([
+  "print","len","range","int","str","float","input",
+  "LinearSearch","BinarySearch","BubbleSort","InsertionSort",
+  "RecursiveBinarySearch","RecursiveInsertionSort",
+  "Countdown","RecursiveSum","RecursiveLinearSearch"
+]);
+
+function pyEscape(text){
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
+function pyHighlight(line){
+  const tokenRe=/(#.*$)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(\b[A-Za-z_]\w*\b)|(\b\d+(?:\.\d+)?\b)|([+\-*\/%<>=!]+)|(\s+)|(.?)/gm;
+  let html="";
+  let match;
+
+  while((match=tokenRe.exec(line))!==null){
+    const [token,comment,stringToken,word,numberToken,operator,space,other]=match;
+
+    if(comment){
+      html+=`<span class="tok-comment">${pyEscape(comment)}</span>`;
+    }else if(stringToken){
+      html+=`<span class="tok-str">${pyEscape(stringToken)}</span>`;
+    }else if(word){
+      if(PY_KEYWORDS.has(word)){
+        html+=`<span class="tok-key">${word}</span>`;
+      }else if(PY_LITERALS.has(word)){
+        html+=`<span class="tok-lit">${word}</span>`;
+      }else if(PY_FUNCTIONS.has(word)){
+        html+=`<span class="tok-fn">${word}</span>`;
+      }else{
+        html+=pyEscape(word);
+      }
+    }else if(numberToken){
+      html+=`<span class="tok-num">${numberToken}</span>`;
+    }else if(operator){
+      html+=`<span class="tok-op">${pyEscape(operator)}</span>`;
+    }else if(space){
+      html+=space;
+    }else if(other){
+      html+=pyEscape(other);
+    }
+
+    if(token==="") tokenRe.lastIndex++;
+  }
+  return html;
+}
+
 const DATA=[37,12,58,19,44,26,67,73];
 const SORT=[29,10,14,37,13,8];
 
@@ -377,7 +465,7 @@ const STEPS={
 let mode="linear",idx=0,timer=null; const SPEED=[1900,1300,850,520,300];
 
 function renderCode(){
- $("code").innerHTML=CODE[mode].map((x,i)=>`<div class="ln" data-l="${i+1}"><span class="n">${i+1}</span><span>${x.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")||" "}</span></div>`).join("")
+ $("code").innerHTML=CODE[mode].map((x,i)=>`<div class="ln" data-l="${i+1}"><span class="n">${i+1}</span><span>${pyHighlight(x)||" "}</span></div>`).join("")
 }
 function render(){
  const s=STEPS[mode][idx];
