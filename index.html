@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cambridge 9618 Unit 19 Visualizer</title>
+<style>
+:root{
+  --bg:#f3f5fa;--panel:#ffffff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;
+  --accent:#e08a00;--accent-soft:#fff0cc;--blue:#3b66d1;--blue-soft:#e6ecff;
+  --radius:14px;--shadow:0 1px 2px rgba(20,30,50,.05),0 10px 30px rgba(20,30,50,.055);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;
+    --accent:#f2b84b;--accent-soft:#3d3112;--blue:#7fa3ff;--blue-soft:#1b2747;
+    color-scheme:dark
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg);color:var(--ink);font:15px/1.5 Arial,Helvetica,sans-serif;
+  padding:12px max(10px,env(safe-area-inset-right,0px)) 26px max(10px,env(safe-area-inset-left,0px));
+}
+.wrap{max-width:1540px;margin:0 auto}
+.navshell{
+  position:sticky;top:0;z-index:30;
+  background:color-mix(in srgb,var(--bg) 91%,transparent);
+  backdrop-filter:blur(12px);
+  padding:4px 0 10px;
+}
+.top{
+  display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap;
+  padding:4px 2px 8px;
+}
+h1{margin:0;font-size:clamp(1.55rem,3vw,2.15rem);letter-spacing:-.02em}
+.sub{margin:2px 0 0;color:var(--muted)}
+.tabs{
+  display:flex;gap:4px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:4px;box-shadow:var(--shadow);max-width:100%
+}
+.tabs button{
+  border:0;background:transparent;color:var(--muted);padding:8px 11px;border-radius:8px;
+  font-weight:700;cursor:pointer;min-height:40px;line-height:1.15
+}
+.tabs button[aria-selected="true"]{
+  background:var(--ink);color:var(--bg);box-shadow:0 1px 2px rgba(0,0,0,.12)
+}
+.tabs button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.quickbar{
+  display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  color:var(--muted);font-size:12.5px;padding:0 3px
+}
+.quickbar strong{color:var(--ink)}
+.quicktags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{padding:3px 7px;border:1px solid var(--line);background:var(--panel);border-radius:999px}
+
+.viewer{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow)
+}
+.head{
+  min-height:48px;display:flex;justify-content:space-between;gap:10px;align-items:center;
+  flex-wrap:wrap;padding:8px 13px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel) 92%,var(--blue-soft)))
+}
+.title{font-weight:800;font-size:15px}
+.badge{
+  color:var(--muted);font-size:12px;padding:4px 8px;border:1px solid var(--line);
+  border-radius:999px;background:var(--panel)
+}
+iframe{
+  display:block;width:100%;height:1180px;border:0;background:var(--panel);
+  transition:height .18s ease
+}
+
+.focus-note{
+  margin-top:12px;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);
+  border-radius:var(--radius);padding:11px 14px;color:var(--muted);box-shadow:var(--shadow)
+}
+.focus-note strong{color:var(--ink)}
+.footer{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  margin-top:9px;padding:0 3px;color:var(--muted);font-size:12.5px
+}
+
+@media(max-width:980px){
+  .top{align-items:flex-start}
+  .tabs{width:100%}
+  .tabs button{flex:1 1 auto}
+}
+@media(max-width:620px){
+  body{padding-left:6px;padding-right:6px}
+  .navshell{padding-bottom:7px}
+  .top{padding-bottom:5px}
+  .sub{font-size:13px}
+  .tabs{gap:3px;padding:3px}
+  .tabs button{font-size:12.5px;padding:7px 8px;min-height:38px}
+  .quickbar{font-size:11.5px}
+  .head{padding:7px 9px}
+  .badge{width:100%;border:0;padding:0;background:transparent}
+  iframe{height:1500px}
+}
+@media(prefers-reduced-motion:reduce){iframe{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="navshell">
+    <div class="top">
+      <div>
+        <h1>Cambridge 9618 — Unit 19 Visualizer</h1>
+        <p class="sub">Algorithms · ADTs · Recursion · Big O · examiner-informed revision</p>
+      </div>
+
+      <nav class="tabs" aria-label="Unit 19 sections">
+        <button type="button" data-view="algorithms" aria-selected="true">Searching & Sorting</button>
+        <button type="button" data-view="stack" aria-selected="false">Stack</button>
+        <button type="button" data-view="queue" aria-selected="false">Queue</button>
+        <button type="button" data-view="list" aria-selected="false">Linked List</button>
+        <button type="button" data-view="bst" aria-selected="false">Binary Tree</button>
+        <button type="button" data-view="recursion" aria-selected="false">Recursion</button>
+        <button type="button" data-view="other" aria-selected="false">Dictionary & Graph</button>
+        <button type="button" data-view="bigo" aria-selected="false">Big O</button>
+        <button type="button" data-view="tips" aria-selected="false">Exam Tips</button>
+      </nav>
+    </div>
+
+    <div class="quickbar">
+      <span><strong id="currentSection">Searching & Sorting</strong> · use the controls inside each visualizer to step through the code.</span>
+      <span class="quicktags" id="quicktags">
+        <span class="tag">trace</span><span class="tag">compare</span><span class="tag">Big O</span>
+      </span>
+    </div>
+  </div>
+
+  <section class="viewer" aria-labelledby="viewerTitle">
+    <div class="head">
+      <span class="title" id="viewerTitle">Searching & Sorting</span>
+      <span class="badge" id="viewerBadge">Linear · Binary · Bubble · Insertion · recursive variants</span>
+    </div>
+    <iframe id="viewer" title="Unit 19 visualizer" src="algorithms.html?embedded=1" loading="eager"></iframe>
+  </section>
+
+  <div class="focus-note">
+    <strong>Unit 19 focus:</strong> use the animations to trace algorithms and pointer changes. The visualiser uses explicit conventions, but examination questions may define pointers differently. Always follow the representation, data types, function names and requirements stated in the question.
+  </div>
+
+  <div class="footer">
+    <span>Graph BFS/DFS is labelled as enrichment.</span>
+    <span>Tip: use the step buttons before Play when learning a new algorithm.</span>
+  </div>
+</div>
+
+<script>
+(()=>{
+  const frame=document.getElementById("viewer");
+  const title=document.getElementById("viewerTitle");
+  const badge=document.getElementById("viewerBadge");
+  const current=document.getElementById("currentSection");
+  const tags=document.getElementById("quicktags");
+
+  const views={
+    algorithms:{
+      src:"algorithms.html?embedded=1",
+      title:"Searching & Sorting",
+      badge:"Linear · Binary · Bubble · Insertion · recursive variants",
+      tags:["trace","compare","Big O"]
+    },
+    stack:{
+      src:"linear-adts.html?mode=stack&embedded=1",
+      title:"Stack",
+      badge:"Push · Pop · TopPointer",
+      tags:["LIFO","pointer","O(1)"]
+    },
+    queue:{
+      src:"linear-adts.html?mode=queue&embedded=1",
+      title:"Circular Queue",
+      badge:"Enqueue · Dequeue · Head/Tail · wrap-around",
+      tags:["FIFO","circular","O(1)"]
+    },
+    list:{
+      src:"linear-adts.html?mode=list&embedded=1",
+      title:"Linked List",
+      badge:"Insert · traverse · remove · free list",
+      tags:["pointers","free list","O(n) search"]
+    },
+    bst:{
+      src:"bst.html?mode=add&embedded=1",
+      title:"Binary Search Tree",
+      badge:"Insert · recursive search · Pre/In/Post-order",
+      tags:["tree","recursion","traversal"]
+    },
+    recursion:{
+      src:"recursion.html?embedded=1",
+      title:"Recursion",
+      badge:"Base case · general case · call stack · unwinding",
+      tags:["base case","stack","unwind"]
+    },
+    other:{
+      src:"other-adts.html?embedded=1",
+      title:"Dictionary & Graph",
+      badge:"Key–value ADT · graph features · BFS/DFS enrichment",
+      tags:["dictionary","graph","enrichment"]
+    },
+    bigo:{
+      src:"complexity.html",
+      title:"Big O Reference",
+      badge:"Time and auxiliary-space complexity",
+      tags:["O(1)","O(log n)","O(n²)"]
+    },
+    tips:{
+      src:"exam-tips.html",
+      title:"Examiner-informed Tips",
+      badge:"Recurring Paper 4 errors and checks",
+      tags:["exam","debug","checklist"]
+    }
+  };
+
+  function setTags(items){
+    tags.innerHTML=items.map(x=>`<span class="tag">${x}</span>`).join("");
+  }
+
+  function syncFrameHeight(){
+    try{
+      const doc=frame.contentDocument;
+      if(!doc)return;
+      const h=Math.max(
+        doc.documentElement.scrollHeight,
+        doc.body ? doc.body.scrollHeight : 0,
+        860
+      );
+      frame.style.height=Math.min(Math.max(h+10,860),1900)+"px";
+    }catch(e){
+      // The fixed CSS height remains as a safe fallback.
+    }
+  }
+
+  let observer=null;
+  frame.addEventListener("load",()=>{
+    syncFrameHeight();
+    try{
+      if(observer)observer.disconnect();
+      const doc=frame.contentDocument;
+      if(doc && "ResizeObserver" in window){
+        observer=new ResizeObserver(syncFrameHeight);
+        observer.observe(doc.documentElement);
+      }
+    }catch(e){}
+  });
+
+  function select(name){
+    const v=views[name]||views.algorithms;
+    document.querySelectorAll("[data-view]").forEach(
+      b=>b.setAttribute("aria-selected",String(b.dataset.view===name))
+    );
+    title.textContent=v.title;
+    badge.textContent=v.badge;
+    current.textContent=v.title;
+    setTags(v.tags);
+    frame.title=v.title+" visualizer";
+    frame.style.height="1180px";
+    frame.src=v.src;
+  }
+
+  document.querySelectorAll("[data-view]").forEach(
+    b=>b.addEventListener("click",()=>select(b.dataset.view))
+  );
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 19 Other ADTs</title>
+<style>
+:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--cur:#e08a00;--blue:#3b66d1;--blue2:#e2eaff;--green:#0d8a7c;--green2:#d6f2ee;--code:#f7f8fc}
+@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--cur:#f2b84b;--blue:#7fa3ff;--blue2:#1b2747;--green:#3cc4b2;--green2:#123631;--code:#111823;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:14px}.wrap{max-width:1100px;margin:auto;display:flex;flex-direction:column;gap:12px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:1.7rem}.sub{margin:3px 0 0;color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px}.tabs button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:8px 12px;border-radius:7px;cursor:pointer}.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.note{border-left:5px solid var(--blue);color:var(--muted)}.note strong{color:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.kv{display:flex;gap:8px;flex-wrap:wrap}.pair{border:1px solid var(--line);border-radius:8px;background:var(--code);padding:9px 11px}.pair b{color:var(--blue)}
+.controls{display:flex;gap:8px;flex-wrap:wrap}.controls button{border:1px solid var(--line);background:var(--code);color:var(--ink);padding:8px 11px;border-radius:7px;font-weight:700;cursor:pointer}.controls button:focus-visible{outline:3px solid var(--cur)}
+svg{width:100%;height:auto;min-height:320px}.edge{stroke:var(--line);stroke-width:3}.node{fill:var(--panel);stroke:var(--blue);stroke-width:3}.node.on{fill:var(--blue2);stroke:var(--cur);stroke-width:5}.label{font:700 16px Arial,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}.seq{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--green2);color:var(--green);border-radius:6px;padding:4px 8px;font-weight:700}
+body.embedded{padding-top:6px}body.embedded header>div:first-child{display:none}body.embedded header{justify-content:flex-end}
+</style>
+<style id="unit19-polish">
+:root{
+  --u19-radius:14px;
+  --u19-radius-sm:10px;
+  --u19-shadow:0 1px 2px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.045);
+}
+body{
+  padding:12px max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));
+}
+.wrap{max-width:1380px;gap:12px}
+.panel,.card,.info,.note,.complexity,.ctl{
+  border-radius:var(--u19-radius)!important;
+  box-shadow:var(--u19-shadow);
+}
+.tabs{
+  border-radius:12px!important;
+  padding:4px!important;
+  gap:4px!important;
+}
+.tabs button{
+  min-height:40px;
+  line-height:1.15;
+  white-space:nowrap;
+}
+.tabs button[aria-selected="true"]{
+  box-shadow:0 1px 2px rgba(0,0,0,.12);
+}
+.ctl{
+  position:sticky;
+  top:6px;
+  z-index:12;
+  backdrop-filter:blur(8px);
+}
+.code{
+  border:1px solid var(--line);
+  scrollbar-width:thin;
+}
+.caption{
+  border-left:4px solid var(--cur)!important;
+}
+.ptitle,.pt{
+  min-height:18px;
+  align-items:center;
+}
+table{line-height:1.35}
+button,input{touch-action:manipulation}
+@media(max-width:900px){
+  .grid{gap:10px!important}
+  .panel{padding:10px!important}
+  .tabs{width:100%}
+  .tabs button{flex:1 1 auto}
+}
+@media(max-width:560px){
+  body{padding-left:7px;padding-right:7px}
+  .ctl{top:2px;gap:5px!important;padding:7px!important}
+  .ctl button{min-width:40px!important;padding:6px 9px!important}
+  .tabs button{font-size:13px!important;padding:7px 9px!important}
+}
+</style>
+
+</head><body><div class="wrap">
+<header><div><h1>Dictionary & Graph ADTs</h1><p class="sub">Concept visualisation for the remaining Unit 19 ADTs.</p></div><div class="tabs"><button data-mode="dict" aria-selected="true">Dictionary</button><button data-mode="graph" aria-selected="false">Graph</button></div></header>
+<div class="panel note" id="note"></div>
+<div id="dictview">
+ <div class="grid">
+  <div class="panel"><h3>Key–value records</h3><div class="kv" id="kv"></div></div>
+  <div class="panel"><h3>Operations</h3><div class="controls"><button id="find">Find "CS"</button><button id="update">Update "Math"</button><button id="resetD">Reset</button></div><p id="dmsg"></p></div>
+ </div>
+</div>
+<div id="graphview" hidden>
+ <div class="grid">
+  <div class="panel"><h3>Graph structure</h3><svg viewBox="0 0 520 330" aria-label="Undirected graph">
+   <line class="edge" x1="90" y1="80" x2="250" y2="55"/><line class="edge" x1="90" y1="80" x2="145" y2="225"/><line class="edge" x1="250" y1="55" x2="395" y2="95"/><line class="edge" x1="250" y1="55" x2="260" y2="220"/><line class="edge" x1="145" y1="225" x2="260" y2="220"/><line class="edge" x1="260" y1="220" x2="410" y2="235"/><line class="edge" x1="395" y1="95" x2="410" y2="235"/>
+   <g data-node="A"><circle class="node" cx="90" cy="80" r="28"/><text class="label" x="90" y="80">A</text></g>
+   <g data-node="B"><circle class="node" cx="250" cy="55" r="28"/><text class="label" x="250" y="55">B</text></g>
+   <g data-node="C"><circle class="node" cx="395" cy="95" r="28"/><text class="label" x="395" y="95">C</text></g>
+   <g data-node="D"><circle class="node" cx="145" cy="225" r="28"/><text class="label" x="145" y="225">D</text></g>
+   <g data-node="E"><circle class="node" cx="260" cy="220" r="28"/><text class="label" x="260" y="220">E</text></g>
+   <g data-node="F"><circle class="node" cx="410" cy="235" r="28"/><text class="label" x="410" y="235">F</text></g>
+  </svg></div>
+  <div class="panel"><h3>Traversal demonstration</h3><p style="color:var(--muted)">BFS/DFS are included as enrichment to make graph behaviour visible. Unit 19 requires graph features and justification, but does not require graph-structure code.</p><div class="controls"><button id="bfs">Animate BFS</button><button id="dfs">Animate DFS</button><button id="resetG">Reset</button></div><h4>Visited order</h4><div class="seq" id="seq"></div></div>
+ </div>
+</div>
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);let mode="dict";let timer=null;
+const original=[["CS",91],["Math",84],["English",78],["Physics",88]];let data=original.map(x=>x.slice());
+const notes={
+dict:"<strong>Dictionary:</strong> stores key–value pairs. <strong>Big O:</strong> depends on implementation. A hash-table implementation is typically average O(1) for insert/find/delete and worst O(n); a simple sequential list of pairs has O(n) search. In an exam, state the implementation before claiming a complexity.",
+graph:"<strong>Graph:</strong> vertices connected by edges; graphs may be directed/undirected and weighted/unweighted. <strong>Big O enrichment:</strong> BFS or DFS with an adjacency-list representation is O(V + E) time and O(V) auxiliary space. Graph code is not required by the Unit 19 syllabus point; focus on features and justification."
+};
+function renderD(){ $("kv").innerHTML=data.map(([k,v])=>`<div class="pair"><b>${k}</b> → ${v}</div>`).join("");$("dmsg").textContent=""}
+function clearG(){clearInterval(timer);timer=null;document.querySelectorAll(".node").forEach(n=>n.classList.remove("on"));$("seq").innerHTML=""}
+function animate(order){clearG();let i=0;timer=setInterval(()=>{if(i>=order.length){clearInterval(timer);timer=null;return}const n=order[i];document.querySelector(`[data-node="${n}"] .node`).classList.add("on");$("seq").insertAdjacentHTML("beforeend",`<span class="chip">${n}</span>`);i++},550)}
+function setMode(m){mode=m;document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.mode===m)));$("dictview").hidden=m!=="dict";$("graphview").hidden=m!=="graph";$("note").innerHTML=notes[m];if(m==="graph")clearG()}
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+$("find").onclick=()=>{const r=data.find(x=>x[0]==="CS");$("dmsg").textContent=`Find("CS") → ${r?r[1]:"not found"}`};$("update").onclick=()=>{const r=data.find(x=>x[0]==="Math");r[1]=90;renderD();$("dmsg").textContent='Updated "Math" to 90.'};$("resetD").onclick=()=>{data=original.map(x=>x.slice());renderD()};
+$("bfs").onclick=()=>animate(["A","B","D","C","E","F"]);$("dfs").onclick=()=>animate(["A","B","C","F","E","D"]);$("resetG").onclick=clearG;
+const p=new URLSearchParams(location.search);if(p.get("embedded")==="1")document.body.classList.add("embedded");renderD();setMode(p.get("mode")==="graph"?"graph":"dict");
+})();
+</script></body></html>

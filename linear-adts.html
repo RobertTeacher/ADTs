@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADT Code Tracer — Stacks, Queues & Linked Lists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f3f5fa; --panel:#ffffff; --ink:#1a2333; --muted:#5a6578; --line:#dbe1ec;
+  --code-bg:#f7f8fc; --hl:#ffe9a8; --hl-edge:#d99a00; --cur:#e08a00;
+  --ok:#0d8a7c; --ok-soft:#d6f2ee; --active:#3b66d1; --active-soft:#e2eaff;
+  --danger:#b84a4a; --danger-soft:#f8dddd; --free:#7d58b2; --free-soft:#eee5fb;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0e131b; --panel:#151c27; --ink:#e5eaf3; --muted:#97a2b6; --line:#263040;
+  --code-bg:#111823; --hl:#3d3112; --hl-edge:#f0b440; --cur:#f2b84b;
+  --ok:#3cc4b2; --ok-soft:#123631; --active:#7fa3ff; --active-soft:#1b2747;
+  --danger:#ff8a8a; --danger-soft:#3b2020; --free:#c9a1ff; --free-soft:#2a203b;
+  color-scheme:dark;
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding:20px max(16px,env(safe-area-inset-right)) 32px max(16px,env(safe-area-inset-left));
+}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3vw,2.1rem);margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:2px 0 0;max-width:72ch}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;flex-wrap:wrap}
+.tabs button{font:600 14px var(--body);border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.tabs button:focus-visible,.ctl button:focus-visible{outline:2px solid var(--cur);outline-offset:2px}
+
+.note{
+  background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--active);
+  border-radius:10px;padding:10px 14px;color:var(--muted)
+}
+.note strong{color:var(--ink)}
+
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.ctl button{font:600 14px var(--body);border:1px solid var(--line);background:var(--code-bg);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;min-width:44px}
+.ctl button.primary{background:var(--cur);border-color:var(--cur);color:#1a1200;min-width:86px}
+.ctl label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.ctl input[type=range]{accent-color:var(--cur)}
+#scrub{flex:1 1 180px;min-width:120px}
+.count{font:13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;min-width:84px;text-align:right}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.18fr);gap:14px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.ptitle{font:700 11px var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
+.code{background:var(--code-bg);border-radius:8px;padding:8px 0;overflow:auto;font:13px/1.65 var(--mono);max-height:540px}
+.ln{display:flex;white-space:pre;padding-right:12px;border-left:3px solid transparent}
+.ln .no{width:34px;flex:none;text-align:right;padding-right:12px;color:var(--muted);user-select:none}
+.ln.on{background:var(--hl);border-left-color:var(--hl-edge)}
+.ln.on .no{color:var(--ink);font-weight:600}
+.kw{color:#8a3fb8;font-weight:600}.num{color:#b0521b}.fn{color:#1f6fb5}
+.caption{font-size:16.5px;min-height:5.2em;display:flex;flex-direction:column;gap:6px}
+.caption .tag{font:600 12px var(--mono);color:var(--hl-edge)}
+.caption p{margin:0;max-width:64ch}
+
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media(max-width:600px){.two{grid-template-columns:1fr}}
+.vars{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font:13.5px var(--mono);font-variant-numeric:tabular-nums}
+.vars dt{color:var(--muted)}.vars dd{margin:0;font-weight:600}
+.out{display:flex;flex-wrap:wrap;gap:6px;min-height:34px;align-items:center}
+.chip{font:600 14px var(--mono);background:var(--ok-soft);color:var(--ok);border-radius:6px;padding:3px 9px}
+.empty{color:var(--muted);font-size:13px}
+
+.array{display:flex;gap:7px;flex-wrap:wrap;align-items:flex-end}
+.cell{min-width:70px;border:1px solid var(--line);border-radius:9px;background:var(--code-bg);padding:7px;text-align:center;font:13px var(--mono);position:relative}
+.cell .idx{display:block;color:var(--muted);font:11px var(--body);margin-bottom:3px}
+.cell.active{outline:3px solid var(--cur);background:var(--hl)}
+.cell.used{border-color:var(--active)}
+.cell.free{border-color:var(--free);background:var(--free-soft)}
+.cell .ptr{display:block;font:10px var(--body);color:var(--cur);margin-top:4px;font-weight:700}
+.stackview{display:flex;flex-direction:column-reverse;gap:5px;max-width:280px;margin:auto}
+.stackcell{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--code-bg);font:600 14px var(--mono);display:flex;justify-content:space-between}
+.stackcell.top{outline:3px solid var(--cur);background:var(--hl)}
+.stackcell small{font:11px var(--body);color:var(--muted)}
+.queueview{display:flex;gap:7px;flex-wrap:wrap}
+.qcell{min-width:76px;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:var(--code-bg);font:13px var(--mono)}
+.qcell.head{outline:3px solid var(--active);background:var(--active-soft)}
+.qcell.tail{box-shadow:inset 0 -4px 0 var(--cur)}
+.qcell.both{outline:3px solid var(--active);box-shadow:inset 0 -4px 0 var(--cur)}
+.qcell .idx{display:block;font:11px var(--body);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+.listrows{display:flex;flex-direction:column;gap:14px}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.node{border:1px solid var(--line);border-radius:9px;background:var(--code-bg);padding:7px 9px;font:13px var(--mono);min-width:90px;text-align:center}
+.node.active{border-color:var(--active);background:var(--active-soft)}
+.node.free{border-color:var(--free);background:var(--free-soft)}
+.node.current{outline:3px solid var(--cur)}
+.arrow{color:var(--muted);font-weight:700}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font:13px var(--mono);font-variant-numeric:tabular-nums}
+th,td{padding:5px 8px;text-align:center;border-bottom:1px solid var(--line)}
+th{font:700 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+tr.cur td{background:var(--hl)}
+td.chg{outline:2px solid var(--cur);outline-offset:-2px;font-weight:700}
+td.blank{color:var(--muted)}
+.opseq{display:flex;gap:6px;flex-wrap:wrap}
+.op{font:12px var(--mono);padding:4px 7px;border:1px solid var(--line);border-radius:6px;color:var(--muted)}
+.op.done{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.op.now{background:var(--hl);color:var(--ink);border-color:var(--cur)}
+body.embedded{padding-top:8px}
+body.embedded header{display:none}
+</style>
+
+<style id="unit19-polish">
+:root{
+  --u19-radius:14px;
+  --u19-radius-sm:10px;
+  --u19-shadow:0 1px 2px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.045);
+}
+body{
+  padding:12px max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));
+}
+.wrap{max-width:1380px;gap:12px}
+.panel,.card,.info,.note,.complexity,.ctl{
+  border-radius:var(--u19-radius)!important;
+  box-shadow:var(--u19-shadow);
+}
+.tabs{
+  border-radius:12px!important;
+  padding:4px!important;
+  gap:4px!important;
+}
+.tabs button{
+  min-height:40px;
+  line-height:1.15;
+  white-space:nowrap;
+}
+.tabs button[aria-selected="true"]{
+  box-shadow:0 1px 2px rgba(0,0,0,.12);
+}
+.ctl{
+  position:sticky;
+  top:6px;
+  z-index:12;
+  backdrop-filter:blur(8px);
+}
+.code{
+  border:1px solid var(--line);
+  scrollbar-width:thin;
+}
+.caption{
+  border-left:4px solid var(--cur)!important;
+}
+.ptitle,.pt{
+  min-height:18px;
+  align-items:center;
+}
+table{line-height:1.35}
+button,input{touch-action:manipulation}
+@media(max-width:900px){
+  .grid{gap:10px!important}
+  .panel{padding:10px!important}
+  .tabs{width:100%}
+  .tabs button{flex:1 1 auto}
+}
+@media(max-width:560px){
+  body{padding-left:7px;padding-right:7px}
+  .ctl{top:2px;gap:5px!important;padding:7px!important}
+  .ctl button{min-width:40px!important;padding:6px 9px!important}
+  .tabs button{font-size:13px!important;padding:7px 9px!important}
+}
+</style>
+
+
+<style id="adt-polish">
+#visual{padding:8px 3px}
+.stackcell,.qcell,.node{transition:transform .16s ease,background .16s ease,outline-color .16s ease}
+.stackcell.top,.qcell.head,.qcell.both,.node.current{transform:translateY(-2px)}
+#convention{line-height:1.55}
+@media(prefers-reduced-motion:reduce){.stackcell,.qcell,.node{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>ADT Code Tracer</h1>
+    <p class="sub">Trace Cambridge-style array implementations of a stack, circular queue and linked list one line at a time.</p>
+  </div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-mode="stack" aria-selected="true">Stack</button>
+    <button role="tab" data-mode="queue" aria-selected="false">Queue</button>
+    <button role="tab" data-mode="list" aria-selected="false">Linked list</button>
+  </div>
+</header>
+
+<div class="note" id="convention"></div>
+
+<div class="ctl">
+  <button id="reset" title="Back to start">⏮</button>
+  <button id="prev" title="Previous step">◀</button>
+  <button id="play" class="primary" title="Play / pause">▶ Play</button>
+  <button id="next" title="Next step">▶</button>
+  <input id="scrub" type="range" min="0" max="0" value="0" aria-label="Step">
+  <span class="count" id="count">0 / 0</span>
+  <label>Speed <input id="speed" type="range" min="1" max="5" value="3"></label>
+</div>
+
+<div class="grid">
+  <div class="col">
+    <div class="panel">
+      <div class="ptitle"><span>Python code</span><span id="lineinfo"></span></div>
+      <div class="code" id="code"></div>
+    </div>
+    <div class="panel caption" aria-live="polite">
+      <span class="tag" id="captag"></span>
+      <p id="cap"></p>
+    </div>
+    <div class="panel">
+      <div class="ptitle"><span>Operation sequence</span></div>
+      <div class="opseq" id="opseq"></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="panel">
+      <div class="ptitle"><span id="vistitle">Structure</span><span id="ptrsummary"></span></div>
+      <div id="visual"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="two">
+      <div class="panel">
+        <div class="ptitle"><span>Variables</span></div>
+        <div id="vars"></div>
+      </div>
+      <div class="panel">
+        <div class="ptitle"><span>Returned / removed values</span></div>
+        <div class="out" id="out"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ptitle"><span id="memtitle">Memory</span></div>
+      <div class="tbl"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const CODE = {
+stack:[
+"Stack = [None] * 6",
+"TopPointer = 0",
+"",
+"def Push(value):",
+"    global TopPointer",
+"    if TopPointer == len(Stack):",
+"        return False",
+"    Stack[TopPointer] = value",
+"    TopPointer = TopPointer + 1",
+"    return True",
+"",
+"def Pop():",
+"    global TopPointer",
+"    if TopPointer == 0:",
+"        return None",
+"    TopPointer = TopPointer - 1",
+"    item = Stack[TopPointer]",
+"    Stack[TopPointer] = None",
+"    return item"
+],
+queue:[
+"Queue = [None] * 6",
+"HeadPointer = 0",
+"TailPointer = 0",
+"NumberItems = 0",
+"",
+"def Enqueue(value):",
+"    global TailPointer, NumberItems",
+"    if NumberItems == len(Queue):",
+"        return False",
+"    Queue[TailPointer] = value",
+"    TailPointer = (TailPointer + 1) % len(Queue)",
+"    NumberItems = NumberItems + 1",
+"    return True",
+"",
+"def Dequeue():",
+"    global HeadPointer, NumberItems",
+"    if NumberItems == 0:",
+"        return None",
+"    item = Queue[HeadPointer]",
+"    Queue[HeadPointer] = None",
+"    HeadPointer = (HeadPointer + 1) % len(Queue)",
+"    NumberItems = NumberItems - 1",
+"    return item"
+],
+list:[
+"LinkedList = [[None, i + 1] for i in range(8)]",
+"LinkedList[7][1] = -1",
+"FirstNode = -1",
+"FirstEmpty = 0",
+"",
+"def InsertFront(value):",
+"    global FirstNode, FirstEmpty",
+"    if FirstEmpty == -1:",
+"        return False",
+"    NewNode = FirstEmpty",
+"    FirstEmpty = LinkedList[NewNode][1]",
+"    LinkedList[NewNode][0] = value",
+"    LinkedList[NewNode][1] = FirstNode",
+"    FirstNode = NewNode",
+"    return True",
+"",
+"def RemoveData(value):",
+"    global FirstNode, FirstEmpty",
+"    if FirstNode == -1:",
+"        return False",
+"    Current = FirstNode",
+"    Previous = -1",
+"    while Current != -1 and LinkedList[Current][0] != value:",
+"        Previous = Current",
+"        Current = LinkedList[Current][1]",
+"    if Current == -1:",
+"        return False",
+"    if Previous == -1:",
+"        FirstNode = LinkedList[Current][1]",
+"    else:",
+"        LinkedList[Previous][1] = LinkedList[Current][1]",
+"    LinkedList[Current][0] = None",
+"    LinkedList[Current][1] = FirstEmpty",
+"    FirstEmpty = Current",
+"    return True"
+]};
+
+const OPS = {
+stack:["Push(18)","Push(42)","Push(7)","Pop()","Push(31)","Pop()"],
+queue:["Enqueue(10)","Enqueue(20)","Enqueue(30)","Enqueue(40)","Dequeue()","Dequeue()","Enqueue(50)","Enqueue(60)","Enqueue(70)","Enqueue(80)"],
+list:["InsertFront(14)","InsertFront(22)","InsertFront(9)","InsertFront(31)","RemoveData(9)","RemoveData(31)","RemoveData(100)"]
+};
+
+const CONVENTION = {
+stack:"<strong>Stack convention:</strong> <code>TopPointer</code> points to the next free position. Empty: <code>TopPointer == 0</code>. Full: <code>TopPointer == len(Stack)</code>.<br><strong>Big O:</strong> Push O(1), Pop O(1), storage O(n).<br><strong>Exam focus:</strong> use the pointer convention stated in the question; do not replace an array-and-pointer solution with <code>append()</code> when explicit indexing is required.",
+queue:"<strong>Queue convention:</strong> circular array. <code>HeadPointer</code> identifies the next item to remove; <code>TailPointer</code> identifies the next free position; <code>NumberItems</code> distinguishes full from empty.<br><strong>Big O:</strong> Enqueue O(1), Dequeue O(1), storage O(n).<br><strong>Exam focus:</strong> a circular queue must wrap the pointers back to index 0; use <code>NumberItems</code> when the question supplies it to distinguish full and empty states.",
+list:"<strong>Linked-list convention:</strong> each row is <code>[Data, NextPointer]</code>. <code>FirstNode</code> identifies the first active node. <code>FirstEmpty</code> identifies the first node in the free list. <code>-1</code> means no next node.<br><strong>Big O:</strong> Insert at front O(1); Find O(n); Remove by value O(n); storage O(n).<br><strong>Exam focus:</strong> traversal must follow <code>NextPointer</code>; deleting a node means reconnecting pointers and, for an array-based free list, returning the released node to the free list."
+};
+
+const SPEEDS=[2200,1500,1000,650,360];
+let mode="stack", idx=0, timer=null;
+
+function clone2(a){return a.map(r=>Array.isArray(r)?r.slice():r)}
+function S(line,tag,msg,state,op,changed=null){return {line,tag,msg,state:JSON.parse(JSON.stringify(state)),op,changed}}
+
+function genStack(){
+  const steps=[], st={arr:Array(6).fill(null),top:0,value:null,item:null,out:[]};
+  let op=0;
+  const snap=(line,tag,msg,chg=null)=>steps.push(S(line,tag,msg,st,op,chg));
+  snap(1,"initialise","Create six stack positions. The stack is empty because TopPointer = 0.");
+  snap(2,"initialise","TopPointer points to the next free position: index 0.");
+  for(const spec of OPS.stack){
+    st.value=null;st.item=null;
+    if(spec.startsWith("Push")){
+      const v=+spec.match(/\d+/)[0]; st.value=v;
+      snap(4,"call",`Call Push(${v}).`);
+      snap(6,"check",`Check whether TopPointer (${st.top}) equals the stack size (6). ${st.top===6?"The stack is full.":"There is space."}`);
+      if(st.top===6){snap(7,"return","Return False because the stack is full.");op++;continue}
+      st.arr[st.top]=v; snap(8,"store",`Store ${v} at Stack[${st.top}].`,{r:st.top,c:0});
+      st.top++; snap(9,"pointer",`Increment TopPointer. It now points to index ${st.top}.`);
+      snap(10,"return","Return True because the value was pushed successfully.");
+    }else{
+      snap(12,"call","Call Pop().");
+      snap(14,"check",`Check whether TopPointer is 0. It is ${st.top}, so ${st.top===0?"the stack is empty.":"there is an item to remove."}`);
+      if(st.top===0){snap(15,"return","Return None because the stack is empty.");op++;continue}
+      st.top--; snap(16,"pointer",`Decrement TopPointer first. The top item is now at index ${st.top}.`);
+      st.item=st.arr[st.top]; snap(17,"read",`Copy Stack[${st.top}] (${st.item}) into item.`);
+      st.arr[st.top]=null; snap(18,"clear",`Clear Stack[${st.top}] after removal.`,{r:st.top,c:0});
+      st.out.push(st.item); snap(19,"return",`Return ${st.item}.`);
+    }
+    op++;
+  }
+  steps.push(S(19,"done","Sequence complete.",st,OPS.stack.length));
+  return steps;
+}
+
+function genQueue(){
+  const steps=[], st={arr:Array(6).fill(null),head:0,tail:0,count:0,value:null,item:null,out:[]};
+  let op=0;
+  const snap=(line,tag,msg,chg=null)=>steps.push(S(line,tag,msg,st,op,chg));
+  snap(1,"initialise","Create six queue positions.");
+  snap(2,"initialise","HeadPointer = 0: this is the next position to dequeue.");
+  snap(3,"initialise","TailPointer = 0: this is the next free position.");
+  snap(4,"initialise","NumberItems = 0, so the queue is empty.");
+  for(const spec of OPS.queue){
+    st.value=null;st.item=null;
+    if(spec.startsWith("Enqueue")){
+      const v=+spec.match(/\d+/)[0];st.value=v;
+      snap(6,"call",`Call Enqueue(${v}).`);
+      snap(8,"check",`Is NumberItems (${st.count}) equal to the queue size (6)? ${st.count===6?"Yes: full.":"No: space is available."}`);
+      if(st.count===6){snap(9,"return","Return False because the queue is full.");op++;continue}
+      const pos=st.tail;st.arr[pos]=v;snap(10,"store",`Store ${v} at Queue[${pos}].`,{r:pos,c:0});
+      st.tail=(st.tail+1)%6;snap(11,"pointer",`Advance TailPointer using modulo. TailPointer is now ${st.tail}.`);
+      st.count++;snap(12,"count",`Increment NumberItems to ${st.count}.`);
+      snap(13,"return","Return True.");
+    }else{
+      snap(15,"call","Call Dequeue().");
+      snap(17,"check",`Is NumberItems 0? It is ${st.count}, so ${st.count===0?"the queue is empty.":"an item can be removed."}`);
+      if(st.count===0){snap(18,"return","Return None because the queue is empty.");op++;continue}
+      const pos=st.head;st.item=st.arr[pos];snap(19,"read",`Copy Queue[${pos}] (${st.item}) into item.`);
+      st.arr[pos]=null;snap(20,"clear",`Clear Queue[${pos}] after removal.`,{r:pos,c:0});
+      st.head=(st.head+1)%6;snap(21,"pointer",`Advance HeadPointer using modulo. HeadPointer is now ${st.head}.`);
+      st.count--;snap(22,"count",`Decrement NumberItems to ${st.count}.`);
+      st.out.push(st.item);snap(23,"return",`Return ${st.item}.`);
+    }
+    op++;
+  }
+  steps.push(S(23,"done","Sequence complete. The final two enqueue operations demonstrate circular wrap-around.",st,OPS.queue.length));
+  return steps;
+}
+
+function genList(){
+  const ll=Array.from({length:8},(_,i)=>[null,i===7?-1:i+1]);
+  const st={arr:ll,first:-1,empty:0,value:null,newNode:null,current:null,previous:null,out:[]};
+  const steps=[];let op=0;
+  const snap=(line,tag,msg,chg=null)=>steps.push(S(line,tag,msg,st,op,chg));
+  snap(1,"initialise","Create eight nodes. Each node points to the next free node.");
+  snap(2,"initialise","The final free node points to -1.");
+  snap(3,"initialise","FirstNode = -1, so the active list is empty.");
+  snap(4,"initialise","FirstEmpty = 0, so index 0 is the first free node.");
+
+  for(const spec of OPS.list){
+    st.value=null;st.newNode=null;st.current=null;st.previous=null;
+    if(spec.startsWith("InsertFront")){
+      const v=+spec.match(/\d+/)[0];st.value=v;
+      snap(6,"call",`Call InsertFront(${v}).`);
+      snap(8,"check",`FirstEmpty is ${st.empty}. ${st.empty===-1?"There are no free nodes.":"A free node is available."}`);
+      if(st.empty===-1){snap(9,"return","Return False because the free list is empty.");op++;continue}
+      st.newNode=st.empty;snap(10,"assign",`NewNode = ${st.newNode}.`);
+      st.empty=st.arr[st.newNode][1];snap(11,"free list",`Move FirstEmpty to ${st.empty}, removing node ${st.newNode} from the free list.`);
+      st.arr[st.newNode][0]=v;snap(12,"store",`Store ${v} in LinkedList[${st.newNode}][0].`,{r:st.newNode,c:0});
+      st.arr[st.newNode][1]=st.first;snap(13,"link",`Point the new node to the old FirstNode (${st.first}).`,{r:st.newNode,c:1});
+      st.first=st.newNode;snap(14,"pointer",`FirstNode becomes ${st.first}. The new node is now at the front.`);
+      snap(15,"return","Return True.");
+    }else{
+      const v=+spec.match(/\d+/)[0];st.value=v;
+      snap(17,"call",`Call RemoveData(${v}).`);
+      snap(19,"check",`FirstNode is ${st.first}. ${st.first===-1?"The list is empty.":"The list contains nodes."}`);
+      if(st.first===-1){snap(20,"return","Return False because the list is empty.");op++;continue}
+      st.current=st.first;snap(21,"assign",`Current starts at FirstNode (${st.current}).`);
+      st.previous=-1;snap(22,"assign","Previous starts at -1 because there is no previous node yet.");
+      while(st.current!==-1 && st.arr[st.current][0]!==v){
+        snap(23,"loop",`LinkedList[${st.current}] stores ${st.arr[st.current][0]}, not ${v}. Continue.`);
+        st.previous=st.current;snap(24,"move",`Previous becomes ${st.previous}.`);
+        st.current=st.arr[st.current][1];snap(25,"move",`Follow the next pointer. Current becomes ${st.current}.`);
+      }
+      snap(26,"check",`Traversal stopped with Current = ${st.current}.`);
+      if(st.current===-1){snap(27,"return",`${v} was not found. Return False.`);op++;continue}
+      if(st.previous===-1){
+        snap(28,"check","Previous is -1, so the node to remove is the first node.");
+        st.first=st.arr[st.current][1];snap(29,"unlink",`FirstNode becomes ${st.first}.`,{r:st.current,c:1});
+      }else{
+        snap(28,"check",`Previous is ${st.previous}, so the node is not the first node.`);
+        st.arr[st.previous][1]=st.arr[st.current][1];snap(31,"unlink",`Change node ${st.previous}'s next pointer so it skips node ${st.current}.`,{r:st.previous,c:1});
+      }
+      st.arr[st.current][0]=null;snap(32,"clear",`Clear the data stored in node ${st.current}.`,{r:st.current,c:0});
+      st.arr[st.current][1]=st.empty;snap(33,"free list",`Link removed node ${st.current} to the current free list (${st.empty}).`,{r:st.current,c:1});
+      st.empty=st.current;snap(34,"pointer",`FirstEmpty becomes ${st.empty}. The removed node is available for reuse.`);
+      st.out.push(v);snap(35,"return","Return True.");
+    }
+    op++;
+  }
+  steps.push(S(35,"done","Sequence complete. Removed nodes have been returned to the free list.",st,OPS.list.length));
+  return steps;
+}
+
+const STEPS={stack:genStack(),queue:genQueue(),list:genList()};
+
+const KW=new Set(["def","if","return","global","while","else","for","in","True","False","None","and"]);
+const FN=new Set(["Push","Pop","Enqueue","Dequeue","InsertFront","RemoveData","len","range"]);
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function hl(line){
+  return line.replace(/[A-Za-z_]\w*|\d+|[^A-Za-z_\d]+/g,t=>{
+    if(KW.has(t))return `<span class="kw">${t}</span>`;
+    if(FN.has(t))return `<span class="fn">${t}</span>`;
+    if(/^\d+$/.test(t))return `<span class="num">${t}</span>`;
+    return esc(t);
+  });
+}
+
+const $=id=>document.getElementById(id);
+
+function renderCode(){
+  $("code").innerHTML=CODE[mode].map((l,i)=>`<div class="ln" data-l="${i+1}"><span class="no">${i+1}</span><span>${hl(l)||" "}</span></div>`).join("");
+}
+function activeChain(st){
+  const out=[];let n=st.first,guard=0;
+  while(n!==-1 && guard<20){out.push(n);n=st.arr[n][1];guard++}
+  return out;
+}
+function freeChain(st){
+  const out=[];let n=st.empty,guard=0;
+  while(n!==-1 && guard<20){out.push(n);n=st.arr[n][1];guard++}
+  return out;
+}
+function renderStack(st){
+  $("vistitle").textContent="Stack";
+  $("ptrsummary").textContent=`TopPointer ${st.top}`;
+  let h='<div class="stackview">';
+  for(let i=0;i<st.arr.length;i++){
+    const top=(st.top>0&&i===st.top-1);
+    h+=`<div class="stackcell ${top?"top":""}"><span>${st.arr[i]===null?"—":st.arr[i]}</span><small>index ${i}${i===st.top?" · next free":""}</small></div>`;
+  }
+  h+='</div>';
+  $("visual").innerHTML=h;
+  $("legend").innerHTML='<span><i style="background:var(--hl);border:2px solid var(--cur)"></i>current top item</span>';
+  $("memtitle").textContent="Stack array";
+  $("thead").innerHTML="<tr><th>Index</th><th>Value</th></tr>";
+  $("tbody").innerHTML=st.arr.map((v,i)=>`<tr><td>${i}</td><td>${v===null?"—":v}</td></tr>`).join("");
+  $("vars").innerHTML=`<dl class="vars"><dt>value</dt><dd>${st.value??"—"}</dd><dt>item</dt><dd>${st.item??"—"}</dd><dt>TopPointer</dt><dd>${st.top}</dd></dl>`;
+}
+function renderQueue(st){
+  $("vistitle").textContent="Circular queue";
+  $("ptrsummary").textContent=`Head ${st.head} · Tail ${st.tail} · Items ${st.count}`;
+  $("visual").innerHTML='<div class="queueview">'+st.arr.map((v,i)=>{
+    const c=i===st.head&&i===st.tail?"both":i===st.head?"head":i===st.tail?"tail":"";
+    return `<div class="qcell ${c}"><span class="idx">index ${i}</span>${v===null?"—":v}</div>`;
+  }).join("")+'</div>';
+  $("legend").innerHTML='<span><i style="background:var(--active-soft);border:2px solid var(--active)"></i>HeadPointer</span><span><i style="background:var(--hl);border-bottom:4px solid var(--cur)"></i>TailPointer / next free</span>';
+  $("memtitle").textContent="Queue array";
+  $("thead").innerHTML="<tr><th>Index</th><th>Value</th></tr>";
+  $("tbody").innerHTML=st.arr.map((v,i)=>`<tr><td>${i}</td><td>${v===null?"—":v}</td></tr>`).join("");
+  $("vars").innerHTML=`<dl class="vars"><dt>value</dt><dd>${st.value??"—"}</dd><dt>item</dt><dd>${st.item??"—"}</dd><dt>HeadPointer</dt><dd>${st.head}</dd><dt>TailPointer</dt><dd>${st.tail}</dd><dt>NumberItems</dt><dd>${st.count}</dd></dl>`;
+}
+function renderList(st){
+  $("vistitle").textContent="Linked list + free list";
+  $("ptrsummary").textContent=`FirstNode ${st.first} · FirstEmpty ${st.empty}`;
+  const a=activeChain(st), f=freeChain(st);
+  const chain=(xs,kind)=>xs.length?xs.map((n,i)=>`<span class="node ${kind} ${st.current===n?"current":""}">[${n}] ${st.arr[n][0]===null?"free":st.arr[n][0]} | next ${st.arr[n][1]}</span>${i<xs.length-1?'<span class="arrow">→</span>':''}`).join(""):'<span class="empty">empty</span>';
+  $("visual").innerHTML=`<div class="listrows"><div><strong>Active list</strong><div class="chain">${chain(a,"active")}</div></div><div><strong>Free list</strong><div class="chain">${chain(f,"free")}</div></div></div>`;
+  $("legend").innerHTML='<span><i style="background:var(--active-soft);border:2px solid var(--active)"></i>active node</span><span><i style="background:var(--free-soft);border:2px solid var(--free)"></i>free node</span><span><i style="background:var(--hl);border:2px solid var(--cur)"></i>Current</span>';
+  $("memtitle").textContent="LinkedList 2D array";
+  $("thead").innerHTML="<tr><th>Index</th><th>Data [0]</th><th>NextPointer [1]</th></tr>";
+  $("tbody").innerHTML=st.arr.map((r,i)=>`<tr class="${st.current===i?"cur":""}"><td>${i}</td><td>${r[0]===null?"—":r[0]}</td><td>${r[1]}</td></tr>`).join("");
+  $("vars").innerHTML=`<dl class="vars"><dt>value</dt><dd>${st.value??"—"}</dd><dt>NewNode</dt><dd>${st.newNode??"—"}</dd><dt>Current</dt><dd>${st.current??"—"}</dd><dt>Previous</dt><dd>${st.previous??"—"}</dd><dt>FirstNode</dt><dd>${st.first}</dd><dt>FirstEmpty</dt><dd>${st.empty}</dd></dl>`;
+}
+function render(){
+  const list=STEPS[mode], s=list[idx], st=s.state;
+  document.querySelectorAll(".ln").forEach(el=>el.classList.toggle("on",+el.dataset.l===s.line));
+  const on=document.querySelector(".ln.on");
+  if(on){const box=$("code"),t=on.offsetTop-box.offsetTop;if(t<box.scrollTop||t>box.scrollTop+box.clientHeight-30)box.scrollTop=Math.max(0,t-70)}
+  $("lineinfo").textContent=`line ${s.line}`;
+  $("captag").textContent=`line ${s.line} · ${s.tag}`;
+  $("cap").textContent=s.msg;
+  $("count").textContent=`${idx+1} / ${list.length}`;
+  $("scrub").max=list.length-1;$("scrub").value=idx;
+  $("convention").innerHTML=CONVENTION[mode];
+
+  if(mode==="stack")renderStack(st);
+  else if(mode==="queue")renderQueue(st);
+  else renderList(st);
+
+  $("out").innerHTML=st.out&&st.out.length?st.out.map(v=>`<span class="chip">${v}</span>`).join(""):'<span class="empty">Nothing returned or removed yet.</span>';
+  $("opseq").innerHTML=OPS[mode].map((o,i)=>`<span class="op ${i<s.op?"done":i===s.op?"now":""}">${o}</span>`).join("");
+}
+
+function setMode(m){
+  stop();mode=m;idx=0;
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.mode===m));
+  renderCode();render();
+}
+function step(d){const n=STEPS[mode].length;idx=Math.max(0,Math.min(n-1,idx+d));render();if(idx===n-1)stop()}
+function play(){if(idx>=STEPS[mode].length-1)idx=0;$("play").textContent="❚❚ Pause";timer=setInterval(()=>step(1),SPEEDS[$("speed").value-1])}
+function stop(){clearInterval(timer);timer=null;$("play").textContent="▶ Play"}
+
+$("play").onclick=()=>timer?stop():play();
+$("next").onclick=()=>{stop();step(1)};
+$("prev").onclick=()=>{stop();step(-1)};
+$("reset").onclick=()=>{stop();idx=0;render()};
+$("scrub").oninput=e=>{stop();idx=+e.target.value;render()};
+$("speed").oninput=()=>{if(timer){stop();play()}};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT")return;
+  if(e.key==="ArrowRight"){stop();step(1)}
+  else if(e.key==="ArrowLeft"){stop();step(-1)}
+  else if(e.key===" "){e.preventDefault();timer?stop():play()}
+});
+const params=new URLSearchParams(window.location.search);
+if(params.get("embedded")==="1")document.body.classList.add("embedded");
+const requested=params.get("mode");
+setMode(["stack","queue","list"].includes(requested)?requested:"stack");
+</script>
+</body>
+</html>

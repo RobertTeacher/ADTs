@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BST Code Tracer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: code on the left like an editor, the live tree + memory on the right; one caption ties them together */
+:root{
+  --bg:#f3f5fa; --panel:#ffffff; --ink:#1a2333; --muted:#5a6578; --line:#dbe1ec;
+  --code-bg:#f7f8fc; --hl:#ffe9a8; --hl-edge:#d99a00; --cur:#e08a00;
+  --print:#0d8a7c; --print-soft:#d6f2ee; --stack:#3b66d1; --stack-soft:#e2eaff;
+  --kw:#8a3fb8; --num:#b0521b; --fn:#1f6fb5; --null:#a7b0c0;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e131b; --panel:#151c27; --ink:#e5eaf3; --muted:#97a2b6; --line:#263040;
+  --code-bg:#111823; --hl:#3d3112; --hl-edge:#f0b440; --cur:#f2b84b;
+  --print:#3cc4b2; --print-soft:#123631; --stack:#7fa3ff; --stack-soft:#1b2747;
+  --kw:#d29bff; --num:#ff9e64; --fn:#6db8ff; --null:#5d6880; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e131b; --panel:#151c27; --ink:#e5eaf3; --muted:#97a2b6; --line:#263040;
+  --code-bg:#111823; --hl:#3d3112; --hl-edge:#f0b440; --cur:#f2b84b;
+  --print:#3cc4b2; --print-soft:#123631; --stack:#7fa3ff; --stack-soft:#1b2747;
+  --kw:#d29bff; --num:#ff9e64; --fn:#6db8ff; --null:#5d6880; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3vw,2.1rem);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;flex-wrap:wrap}
+.tabs button{font:600 14px var(--body);border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.tabs button:focus-visible,.ctl button:focus-visible{outline:2px solid var(--cur);outline-offset:2px}
+
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.ctl button{font:600 14px var(--body);border:1px solid var(--line);background:var(--code-bg);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;min-width:44px}
+.ctl button.primary{background:var(--cur);border-color:var(--cur);color:#1a1200;min-width:86px}
+.ctl label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.ctl input[type=range]{accent-color:var(--cur)}
+#scrub{flex:1 1 180px;min-width:120px}
+.count{font:13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;min-width:84px;text-align:right}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.ptitle{font:700 11px var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
+
+.code{background:var(--code-bg);border-radius:8px;padding:8px 0;overflow-x:auto;font:13px/1.65 var(--mono)}
+.ln{display:flex;white-space:pre;padding-right:12px;border-left:3px solid transparent;transition:background .2s}
+.ln .no{width:34px;flex:none;text-align:right;padding-right:12px;color:var(--null);user-select:none}
+.ln.on{background:var(--hl);border-left-color:var(--hl-edge)}
+.ln.on .no{color:var(--ink);font-weight:600}
+.ln.paused{background:var(--stack-soft);border-left-color:var(--stack)}
+.k{color:var(--kw);font-weight:600}.n{color:var(--num)}.f{color:var(--fn)}
+
+.caption{font-size:16.5px;min-height:5.2em;display:flex;flex-direction:column;gap:6px}
+.caption .tag{font:600 12px var(--mono);color:var(--hl-edge)}
+.caption p{margin:0;max-width:62ch}
+
+.treebox{overflow:visible;padding:14px 26px 8px;min-height:365px}
+svg{display:block;width:100%;min-width:0;max-width:100%;height:auto;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:560px){.two{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:6px;font:13px var(--mono)}
+.frame{border:1px solid var(--line);border-radius:8px;padding:6px 9px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.frame.top{border-color:var(--cur);background:var(--hl)}
+.frame.wait{background:var(--stack-soft);border-color:transparent}
+.frame small{color:var(--muted);font-family:var(--body)}
+.vars{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font:13.5px var(--mono);font-variant-numeric:tabular-nums}
+.vars dt{color:var(--muted)}.vars dd{margin:0;font-weight:600}
+.out{display:flex;flex-wrap:wrap;gap:6px;min-height:34px;align-items:center}
+.chip{font:600 14px var(--mono);background:var(--print-soft);color:var(--print);border-radius:6px;padding:3px 9px}
+.chip.new{outline:2px solid var(--print)}
+.empty{color:var(--muted);font-size:13px}
+
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font:13px var(--mono);font-variant-numeric:tabular-nums}
+th,td{padding:4px 8px;text-align:center;border-bottom:1px solid var(--line)}
+th{font:700 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+tr.cur td{background:var(--hl)}
+td.chg{outline:2px solid var(--cur);outline-offset:-2px;font-weight:700}
+td.blank{color:var(--null)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+body.embedded{padding-top:8px}
+body.embedded header>div:first-child{display:none}
+body.embedded header{justify-content:flex-end}
+.complexity{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--stack);border-radius:10px;padding:10px 12px;color:var(--muted)}
+.complexity strong{color:var(--ink)}
+</style>
+
+<style>html,body{margin:0}[hidden]{display:none!important}</style>
+
+<style id="unit19-polish">
+:root{
+  --u19-radius:14px;
+  --u19-radius-sm:10px;
+  --u19-shadow:0 1px 2px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.045);
+}
+body{
+  padding:12px max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));
+}
+.wrap{max-width:1380px;gap:12px}
+.panel,.card,.info,.note,.complexity,.ctl{
+  border-radius:var(--u19-radius)!important;
+  box-shadow:var(--u19-shadow);
+}
+.tabs{
+  border-radius:12px!important;
+  padding:4px!important;
+  gap:4px!important;
+}
+.tabs button{
+  min-height:40px;
+  line-height:1.15;
+  white-space:nowrap;
+}
+.tabs button[aria-selected="true"]{
+  box-shadow:0 1px 2px rgba(0,0,0,.12);
+}
+.ctl{
+  position:sticky;
+  top:6px;
+  z-index:12;
+  backdrop-filter:blur(8px);
+}
+.code{
+  border:1px solid var(--line);
+  scrollbar-width:thin;
+}
+.caption{
+  border-left:4px solid var(--cur)!important;
+}
+.ptitle,.pt{
+  min-height:18px;
+  align-items:center;
+}
+table{line-height:1.35}
+button,input{touch-action:manipulation}
+@media(max-width:900px){
+  .grid{gap:10px!important}
+  .panel{padding:10px!important}
+  .tabs{width:100%}
+  .tabs button{flex:1 1 auto}
+}
+@media(max-width:560px){
+  body{padding-left:7px;padding-right:7px}
+  .ctl{top:2px;gap:5px!important;padding:7px!important}
+  .ctl button{min-width:40px!important;padding:6px 9px!important}
+  .tabs button{font-size:13px!important;padding:7px 9px!important}
+}
+</style>
+
+
+<style id="bst-layout-fix">
+/* Give the tree enough breathing room for node labels, current-value bubbles and root annotations. */
+.treebox{display:flex;align-items:flex-start;justify-content:center}
+#tree{min-height:350px}
+.grid{grid-template-columns:minmax(360px,.92fr) minmax(520px,1.28fr)}
+.caption{min-height:4.6em}
+@media(max-width:1080px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .treebox{padding-left:44px;padding-right:44px}
+  #tree{max-height:520px}
+}
+@media(max-width:620px){
+  .treebox{padding:10px 12px 5px;min-height:300px}
+  #tree{min-height:290px}
+  .two{grid-template-columns:1fr}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>BST Code Tracer</h1>
+      <p class="sub">Watch the Python run one line at a time while the tree and the array change beside it.</p>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-mode="add" aria-selected="false" id="tab-add">AddNode</button>
+      <button role="tab" data-mode="search" aria-selected="false" id="tab-search">Recursive Search</button>
+      <button role="tab" data-mode="pre" aria-selected="false" id="tab-pre">Pre-order</button>
+      <button role="tab" data-mode="in" aria-selected="true" id="tab-in">In-order</button>
+      <button role="tab" data-mode="post" aria-selected="false" id="tab-post">Post-order</button>
+    </div>
+  </header>
+
+  <div class="ctl">
+    <button id="reset" title="Back to start">⏮</button>
+    <button id="prev" title="Previous step (←)">◀</button>
+    <button id="play" class="primary" title="Play / pause (space)">▶ Play</button>
+    <button id="next" title="Next step (→)">▶</button>
+    <input id="scrub" type="range" min="0" max="0" value="0" aria-label="Step">
+    <span class="count" id="count">0 / 0</span>
+    <label for="speed">Speed <input id="speed" type="range" min="1" max="5" value="3"></label>
+  </div>
+
+  <div class="complexity" id="complexity"><strong>Big O:</strong> traversal O(n).</div>
+
+  <div class="grid">
+    <div class="col">
+      <div class="panel">
+        <div class="ptitle"><span>Code</span><span id="lineinfo"></span></div>
+        <div class="code" id="code"></div>
+      </div>
+      <div class="panel caption" aria-live="polite">
+        <span class="tag" id="captag"></span>
+        <p id="cap"></p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="panel">
+        <div class="ptitle"><span>Tree</span></div>
+        <div class="treebox"><svg id="tree" viewBox="-55 -34 710 425" preserveAspectRatio="xMidYMin meet" role="img" aria-label="Binary search tree"></svg></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="two">
+        <div class="panel">
+          <div class="ptitle"><span id="sidetitle">Call stack</span><span id="sidehint"></span></div>
+          <div id="side"></div>
+        </div>
+        <div class="panel">
+          <div class="ptitle"><span>Output</span></div>
+          <div class="out" id="out"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ptitle"><span>ArrayNodes</span><span id="ptrs"></span></div>
+        <div class="tbl"><table><thead><tr><th>Index</th><th>Left [0]</th><th>Data [1]</th><th>Right [2]</th></tr></thead><tbody id="arr"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const VALUES=[50,30,70,20,40,60,80,35,65];
+const SIZE=20;
+const CODE={
+ add:["def AddNode(value):","    global RootPointer, FreeNode","    if FreeNode >= len(ArrayNodes):","        return False","    NewNode = FreeNode","    ArrayNodes[NewNode] = [-1, value, -1]","    FreeNode = FreeNode + 1","    if RootPointer == -1:","        RootPointer = NewNode","        return True","    CurrentNode = RootPointer","    while True:","        if value < ArrayNodes[CurrentNode][1]:","            if ArrayNodes[CurrentNode][0] == -1:","                ArrayNodes[CurrentNode][0] = NewNode","                return True","            CurrentNode = ArrayNodes[CurrentNode][0]","        else:","            if ArrayNodes[CurrentNode][2] == -1:","                ArrayNodes[CurrentNode][2] = NewNode","                return True","            CurrentNode = ArrayNodes[CurrentNode][2]","","for value in [50, 30, 70, 20, 40, 60, 80, 35, 65]:","    AddNode(value)"],
+ search:["def SearchValue(root, target):","    if root == -1:","        return -1","    if ArrayNodes[root][1] == target:","        return root","    if target < ArrayNodes[root][1]:","        return SearchValue(ArrayNodes[root][0], target)","    return SearchValue(ArrayNodes[root][2], target)","","print(SearchValue(RootPointer, 65))"],
+ pre:["def OutputPreOrder(root):","    if root == -1:","        return","    print(ArrayNodes[root][1])","    OutputPreOrder(ArrayNodes[root][0])","    OutputPreOrder(ArrayNodes[root][2])","","OutputPreOrder(RootPointer)"],
+ in:["def OutputInOrder(root):","    if root == -1:","        return","    OutputInOrder(ArrayNodes[root][0])","    print(ArrayNodes[root][1])","    OutputInOrder(ArrayNodes[root][2])","","OutputInOrder(RootPointer)"],
+ post:["def PostOrder(root):","    if root == -1:","        return","    PostOrder(ArrayNodes[root][0])","    PostOrder(ArrayNodes[root][2])","    print(ArrayNodes[root][1])","","PostOrder(RootPointer)"]
+};
+const KW=new Set(["def","if","return","global","while","else","for","in","True","False"]);
+const BUILTIN=new Set(["print","len","AddNode","SearchValue","OutputPreOrder","OutputInOrder","PostOrder"]);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function hl(line){
+  return line.replace(/[A-Za-z_]\w*|\d+|[^A-Za-z_\d]+/g,t=>{
+    if(KW.has(t))return `<span class="k">${t}</span>`;
+    if(BUILTIN.has(t))return `<span class="f">${t}</span>`;
+    if(/^\d+$/.test(t))return `<span class="n">${t}</span>`;
+    return esc(t);
+  });
+}
+
+/* ---------- build final tree (for positions + traversals) ---------- */
+function buildFinal(){
+  const a=[];let root=-1;
+  for(const v of VALUES){
+    const n=a.length;a.push([-1,v,-1]);
+    if(root===-1){root=n;continue}
+    let c=root;
+    while(true){const s=v<a[c][1]?0:2;if(a[c][s]===-1){a[c][s]=n;break}c=a[c][s]}
+  }
+  return {a,root};
+}
+const FINAL=buildFinal();
+const POS={};
+(function layout(){
+  let i=0;
+  (function walk(n,d){if(n===-1)return;walk(FINAL.a[n][0],d+1);POS[n]={x:44+i*64,y:34+d*72,d};i++;walk(FINAL.a[n][2],d+1)})(FINAL.root,0);
+})();
+const nullPos=(p,side)=>({x:POS[p].x+(side==="left"?-24:24),y:POS[p].y+58});
+
+/* ---------- step generators ---------- */
+function genAdd(){
+  const steps=[],a=[];let root=-1,free=0,cur=null,nn=null,val=null,changed=null;
+  const snap=(line,tag,msg)=>{steps.push({line,tag,msg,a:a.map(r=>r.slice()),root,free,cur,nn,val,changed});changed=null};
+  for(const v of VALUES){
+    val=v;cur=null;nn=null;
+    snap(24,"for loop",`Take the next value from the list: ${v}.`);
+    snap(25,"call",`Call AddNode(${v}).`);
+    snap(1,"enter",`AddNode starts. value = ${v}.`);
+    snap(3,"check",`Is the array full? FreeNode is ${free} and the array has ${SIZE} boxes, so no. Keep going.`);
+    nn=free;snap(5,"assign",`NewNode = FreeNode, so the new node goes in box ${nn}.`);
+    a[nn]=[-1,v,-1];changed={r:nn,c:"row"};snap(6,"store",`Write [-1, ${v}, -1] into box ${nn}. It has no children yet, so both pointers are -1.`);
+    free++;snap(7,"assign",`FreeNode goes up to ${free}, ready for the next value.`);
+    if(root===-1){
+      snap(8,"check","RootPointer is -1, which means the tree is empty.");
+      root=nn;snap(9,"assign",`RootPointer = ${nn}. ${v} becomes the root of the tree.`);
+      snap(10,"return",`return True. ${v} is in the tree.`);continue;
+    }
+    snap(8,"check",`RootPointer is ${root}, not -1, so the tree already has nodes. Skip this block.`);
+    cur=root;snap(11,"assign",`Start at the root: CurrentNode = ${cur} (value ${a[cur][1]}).`);
+    while(true){
+      const cv=a[cur][1];
+      snap(12,"loop",`Loop: compare ${v} with the node in box ${cur} (${cv}).`);
+      const left=v<cv,s=left?0:2,side=left?"left":"right",L=left?{test:14,set:15,ret:16,mv:17}:{test:19,set:20,ret:21,mv:22};
+      if(left)snap(13,"compare",`Is ${v} < ${cv}? Yes, so go left.`);
+      else{snap(13,"compare",`Is ${v} < ${cv}? No, so jump to else.`);snap(18,"else",`${v} ≥ ${cv}, so go right.`)}
+      if(a[cur][s]===-1){
+        snap(L.test,"check",`Box ${cur}'s ${side} pointer is -1. That spot is empty!`);
+        a[cur][s]=nn;changed={r:cur,c:s};snap(L.set,"link",`Set box ${cur}'s ${side} pointer to ${nn}. Now ${v} is ${cv}'s ${side} child.`);
+        cur=null;snap(L.ret,"return",`return True. ${v} is in the tree.`);break;
+      }
+      snap(L.test,"check",`Box ${cur}'s ${side} pointer is ${a[cur][s]}, so that spot is taken. Keep walking.`);
+      cur=a[cur][s];snap(L.mv,"move",`Move ${side}: CurrentNode = ${cur} (value ${a[cur][1]}).`);
+    }
+  }
+  val=null;nn=null;cur=null;
+  snap(24,"done","All 9 values are in the tree. Switch to In-order or Post-order to traverse it.");
+  return steps;
+}
+
+function genTrav(kind){
+  const a=FINAL.a;
+  const fn=kind==="pre"?"OutputPreOrder":kind==="in"?"OutputInOrder":"PostOrder";
+  const ln=kind==="pre"?{P:4,L:5,R:6}:kind==="in"?{L:4,P:5,R:6}:{L:4,R:5,P:6};
+  const order=kind==="pre"?["P","L","R"]:kind==="in"?["L","P","R"]:["L","R","P"];
+  const steps=[],stack=[],out=[];let fresh=false;
+  const snap=(line,tag,msg,cur,nul)=>{steps.push({line,tag,msg,cur,nul,stack:stack.map(f=>({...f})),out:out.slice(),fresh});fresh=false};
+  snap(8,"start",`Start by calling ${fn}(RootPointer). RootPointer is ${FINAL.root}, the box holding ${a[FINAL.root][1]}.`,null,null);
+  function rec(r,parent,side){
+    const f={root:r,line:1};stack.push(f);
+    if(r===-1){
+      const pv=parent==null?"the root call":a[parent][1];
+      f.line=2;snap(2,"base case",`root = -1. There is no node here${parent==null?".":`, because ${pv}'s ${side} pointer is empty.`}`,null,parent==null?null:{p:parent,side});
+      f.line=3;snap(3,"return","Base case reached. Return to the paused recursive call underneath.",null,parent==null?null:{p:parent,side});
+      stack.pop();return;
+    }
+    const v=a[r][1];
+    f.line=1;snap(1,"new call",`New recursive call: root = ${r}, the node holding ${v}.`,r);
+    f.line=2;snap(2,"check",`root is ${r}, not -1, so continue.`,r);
+    order.forEach((op,i)=>{
+      const last=i===order.length-1;
+      if(op==="P"){
+        f.line=ln.P;out.push(v);fresh=true;
+        const reason=kind==="pre"?"Visit the current node before its subtrees.":kind==="in"?"The left subtree is complete; visit the current node.":"Both subtrees are complete; now visit the current node.";
+        snap(ln.P,"visit",`Output ${v}. ${reason}`+(last?" This call will now return.":""),r);
+        return;
+      }
+      const s=op==="L"?0:2,sd=op==="L"?"left":"right",c=a[r][s];
+      f.line=ln[op];
+      snap(ln[op],"recursive call",`Call ${fn}(${c}) for the ${sd} subtree${c===-1?" (empty)":`, node ${a[c][1]}`}. The current call for ${v} pauses.`,r);
+      rec(c,r,sd);
+      f.line=ln[op];
+      snap(ln[op],"unwind",`The ${sd} recursive call has returned to node ${v}.`+(last?" This call is complete.":" Continue to the next statement."),r);
+    });
+    stack.pop();
+  }
+  rec(FINAL.root,null,null);
+  snap(8,"done",`Traversal complete. Output: ${out.join(", ")}.`,null,null);
+  return steps;
+}
+
+
+function genSearch(target=65){
+  const a=FINAL.a,steps=[],stack=[],out=[];let fresh=false;
+  const snap=(line,tag,msg,cur,nul)=>{steps.push({line,tag,msg,cur,nul,stack:stack.map(f=>({...f})),out:out.slice(),fresh});fresh=false};
+  snap(11,"start",`Search for ${target} by calling SearchValue(RootPointer, ${target}).`,null,null);
+  function rec(r,parent,side){
+    const f={root:r,line:1};stack.push(f);
+    f.line=1;snap(1,"new call",`SearchValue starts with root = ${r}.`,r===-1?null:r,parent==null?null:{p:parent,side});
+    if(r===-1){
+      f.line=2;snap(2,"base case","root == -1, so the target is not in this subtree.",null,parent==null?null:{p:parent,side});
+      f.line=3;snap(3,"return","Return -1 and unwind to the previous call.",null,parent==null?null:{p:parent,side});
+      stack.pop();return -1;
+    }
+    const v=a[r][1];
+    f.line=4;snap(4,"compare",`Compare target ${target} with ArrayNodes[${r}][1] (${v}).`,r,null);
+    if(v===target){
+      out.push(r);fresh=true;f.line=5;snap(5,"return",`Match found. Return node index ${r}.`,r,null);
+      stack.pop();return r;
+    }
+    f.line=6;snap(6,"compare",`Is ${target} < ${v}? ${target<v?"Yes: search left.":"No: search right."}`,r,null);
+    const goLeft=target<v;
+    const child=a[r][goLeft?0:2];
+    const line=goLeft?7:8;
+    f.line=line;snap(line,"recursive call",`Call SearchValue(${child}, ${target}). The call for node ${v} pauses.`,r,null);
+    const ans=rec(child,r,goLeft?"left":"right");
+    f.line=line;snap(line,"unwind",`The recursive call returns ${ans} to node ${v}.`,r,null);
+    stack.pop();return ans;
+  }
+  const result=rec(FINAL.root,null,null);
+  snap(11,"done",`Search complete. Returned value: ${result}.`,result===-1?null:result,null);
+  return steps;
+}
+
+const STEPS={add:genAdd(),search:genSearch(65),pre:genTrav("pre"),in:genTrav("in"),post:genTrav("post")};
+
+/* ---------- rendering ---------- */
+const $=id=>document.getElementById(id);
+let mode="in",idx=0,timer=null;
+const SPEEDS=[2200,1500,1000,620,350];
+
+function renderCode(){
+  $("code").innerHTML=CODE[mode].map((l,i)=>`<div class="ln" data-l="${i+1}"><span class="no">${i+1}</span><span>${hl(l)||" "}</span></div>`).join("");
+}
+function svgEl(tag,attrs,text){
+  const e=document.createElementNS("http://www.w3.org/2000/svg",tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e;
+}
+function drawTree(st){
+  const svg=$("tree");svg.innerHTML="";
+  const trav=mode!=="add";
+  const a=trav?FINAL.a:st.a;
+  const css=getComputedStyle(document.documentElement);
+  const C=n=>css.getPropertyValue(n).trim();
+  const onStack=new Set(trav?st.stack.filter(f=>f.root!==-1).map(f=>f.root):[]);
+  const printed=trav?(()=>{const m={};st.out.forEach((v,i)=>{const n=a.findIndex(r=>r&&r[1]===v);m[n]=i+1});return m})():{};
+  const gE=svgEl("g",{}),gN=svgEl("g",{});svg.append(gE,gN);
+  a.forEach((r,n)=>{
+    if(!r)return;
+    [[0,"left"],[2,"right"]].forEach(([s,side])=>{
+      const c=r[s];
+      if(c!==-1&&a[c]){
+        const hot=trav&&onStack.has(n)&&onStack.has(c);
+        gE.append(svgEl("line",{x1:POS[n].x,y1:POS[n].y,x2:POS[c].x,y2:POS[c].y,stroke:hot?C("--stack"):C("--line"),"stroke-width":hot?3:2}));
+      }else if(trav){
+        const p=nullPos(n,side),on=st.nul&&st.nul.p===n&&st.nul.side===side;
+        gE.append(svgEl("line",{x1:POS[n].x,y1:POS[n].y,x2:p.x,y2:p.y-10,stroke:on?C("--cur"):C("--null"),"stroke-width":on?2.5:1.2,"stroke-dasharray":"3 3"}));
+        gN.append(svgEl("rect",{x:p.x-14,y:p.y-10,width:28,height:20,rx:5,fill:on?C("--hl"):C("--panel"),stroke:on?C("--cur"):C("--null"),"stroke-width":on?2.5:1,"stroke-dasharray":on?"":"3 2"}));
+        gN.append(svgEl("text",{x:p.x,y:p.y+4,"text-anchor":"middle","font-family":"JetBrains Mono, monospace","font-size":11,fill:on?C("--ink"):C("--null")},"-1"));
+      }
+    });
+  });
+  a.forEach((r,n)=>{
+    if(!r)return;const p=POS[n];
+    const isCur=st.cur===n,isNew=!trav&&st.nn===n,pr=printed[n];
+    let fill=C("--panel"),stroke=C("--muted"),sw=1.5,txt=C("--ink");
+    if(onStack.has(n)){fill=C("--stack-soft");stroke=C("--stack");sw=2}
+    if(pr){fill=C("--print");stroke=C("--print");txt=C("--panel")}
+    if(isNew){stroke=C("--print");sw=3}
+    if(isCur){stroke=C("--cur");sw=4;if(!pr)fill=C("--hl")}
+    gN.append(svgEl("circle",{cx:p.x,cy:p.y,r:20,fill,stroke,"stroke-width":sw}));
+    gN.append(svgEl("text",{x:p.x,y:p.y+5,"text-anchor":"middle","font-family":"JetBrains Mono, monospace","font-size":14,"font-weight":700,fill:txt},r[1]));
+    gN.append(svgEl("text",{x:p.x-25,y:p.y-16,"text-anchor":"end","font-family":"JetBrains Mono, monospace","font-size":10,fill:C("--muted")},`[${n}]`));
+    if(pr){
+      gN.append(svgEl("circle",{cx:p.x+17,cy:p.y-17,r:9,fill:C("--panel"),stroke:C("--print"),"stroke-width":1.5}));
+      gN.append(svgEl("text",{x:p.x+17,y:p.y-13.5,"text-anchor":"middle","font-family":"JetBrains Mono, monospace","font-size":10,"font-weight":700,fill:C("--print")},pr));
+    }
+  });
+  if(!trav&&st.val!=null&&st.cur!=null){
+    const p=POS[st.cur],x=p.x+30,y=p.y-30;
+    gN.append(svgEl("rect",{x:x-2,y:y-12,width:64,height:22,rx:11,fill:C("--cur")}));
+    gN.append(svgEl("text",{x:x+30,y:y+3,"text-anchor":"middle","font-family":"JetBrains Mono, monospace","font-size":12,"font-weight":700,fill:"#1a1200"},`${st.val} ?`));
+  }
+}
+function render(){
+  const list=STEPS[mode],st=list[idx];
+  document.querySelectorAll(".ln").forEach(el=>{
+    const l=+el.dataset.l;el.classList.toggle("on",l===st.line);
+    el.classList.toggle("paused",mode!=="add"&&l!==st.line&&st.stack.slice(0,-1).some(f=>f.line===l));
+  });
+  const on=document.querySelector(".ln.on");
+  if(on){const box=$("code");const t=on.offsetTop-box.offsetTop;if(t<box.scrollTop||t>box.scrollTop+box.clientHeight-30)box.scrollTop=t-60}
+  $("lineinfo").textContent=`line ${st.line}`;
+  $("captag").textContent=`line ${st.line} · ${st.tag}`;
+  $("cap").textContent=st.msg;
+  $("count").textContent=`${idx+1} / ${list.length}`;
+  $("scrub").max=list.length-1;$("scrub").value=idx;
+  drawTree(st);
+
+  const complexityText={
+    add:"<strong>Big O:</strong> Insert average O(log n), worst O(n) if the tree becomes unbalanced; storage O(n).",
+    search:"<strong>Big O:</strong> Search average O(log n), worst O(n); recursive call-stack space O(h), where h is tree height.",
+    pre:"<strong>Big O:</strong> Pre-order traversal O(n) time; recursive stack O(h).",
+    in:"<strong>Big O:</strong> In-order traversal O(n) time; recursive stack O(h).",
+    post:"<strong>Big O:</strong> Post-order traversal O(n) time; recursive stack O(h)."
+  };
+  $("complexity").innerHTML=complexityText[mode];
+
+  const a=mode==="add"?st.a:FINAL.a;
+  if(mode==="add"){
+    $("sidetitle").textContent="Variables";$("sidehint").textContent="";
+    const v=(x)=>x==null?"—":x;
+    $("side").innerHTML=`<dl class="vars"><dt>value</dt><dd>${v(st.val)}</dd><dt>NewNode</dt><dd>${v(st.nn)}</dd><dt>CurrentNode</dt><dd>${v(st.cur)}</dd><dt>FreeNode</dt><dd>${st.free}</dd><dt>RootPointer</dt><dd>${st.root}</dd></dl>`;
+    const added=st.a.filter(Boolean).map(r=>r[1]);
+    $("out").innerHTML=added.length?`<span class="empty" style="width:100%">Stored so far:</span>`+added.map((x,i)=>`<span class="chip${st.changed&&st.changed.c==="row"&&i===added.length-1?" new":""}">${x}</span>`).join(""):`<span class="empty">Nothing stored yet.</span>`;
+    $("ptrs").textContent=`RootPointer ${st.root} · FreeNode ${st.free}`;
+  }else{
+    $("sidetitle").textContent="Call stack";$("sidehint").textContent="newest on top";
+    const fn=mode==="search"?"SearchValue":mode==="pre"?"OutputPreOrder":mode==="in"?"OutputInOrder":"PostOrder";
+    $("side").innerHTML=st.stack.length?`<div class="stack">`+st.stack.slice().reverse().map((f,i)=>{
+      const top=i===0,what=f.root===-1?"empty":`node ${FINAL.a[f.root][1]}`;
+      return `<div class="frame ${top?"top":"wait"}"><span>${fn}(${f.root})</span><small>${what} · ${top?"running line "+f.line:"paused at line "+f.line}</small></div>`}).join("")+`</div>`:`<span class="empty">No calls running.</span>`;
+    $("out").innerHTML=st.out.length?st.out.map((x,i)=>`<span class="chip${st.fresh&&i===st.out.length-1?" new":""}">${x}</span>`).join(""):`<span class="empty">Nothing printed yet.</span>`;
+    $("ptrs").textContent=`RootPointer ${FINAL.root} · FreeNode ${FINAL.a.length}`;
+  }
+  const curRow=mode==="add"?st.cur:st.cur;
+  let rows="";
+  for(let i=0;i<VALUES.length;i++){
+    const r=a[i];
+    const c=k=>mode==="add"&&st.changed&&st.changed.r===i&&(st.changed.c==="row"||st.changed.c===k)?" class=\"chg\"":"";
+    rows+=r?`<tr class="${curRow===i?"cur":""}"><td>${i}</td><td${c(0)}>${r[0]}</td><td${c(1)}>${r[1]}</td><td${c(2)}>${r[2]}</td></tr>`
+           :`<tr><td>${i}</td><td class="blank">—</td><td class="blank">—</td><td class="blank">—</td></tr>`;
+  }
+  $("arr").innerHTML=rows;
+  $("legend").innerHTML=mode==="add"
+    ?`<span><i style="background:var(--hl);border:2px solid var(--cur)"></i>CurrentNode</span><span><i style="border:3px solid var(--print)"></i>NewNode</span><span>[n] = box number in the array</span>`
+    :`<span><i style="background:var(--hl);border:2px solid var(--cur)"></i>running now</span><span><i style="background:var(--stack-soft);border:2px solid var(--stack)"></i>paused, waiting</span><span><i style="background:var(--print)"></i>printed (with order)</span><span>dashed −1 = empty child</span>`;
+}
+function setMode(m){
+  stop();mode=m;idx=0;
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.mode===m));
+  renderCode();render();
+}
+function step(d){const n=STEPS[mode].length;idx=Math.max(0,Math.min(n-1,idx+d));render();if(idx===n-1)stop()}
+function play(){
+  if(idx>=STEPS[mode].length-1)idx=0;
+  $("play").textContent="❚❚ Pause";
+  timer=setInterval(()=>step(1),SPEEDS[$("speed").value-1]);
+}
+function stop(){clearInterval(timer);timer=null;$("play").textContent="▶ Play"}
+$("play").onclick=()=>timer?stop():play();
+$("next").onclick=()=>{stop();step(1)};
+$("prev").onclick=()=>{stop();step(-1)};
+$("reset").onclick=()=>{stop();idx=0;render()};
+$("scrub").oninput=e=>{stop();idx=+e.target.value;render()};
+$("speed").oninput=()=>{if(timer){stop();play()}};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT")return;
+  if(e.key==="ArrowRight"){stop();step(1)}
+  else if(e.key==="ArrowLeft"){stop();step(-1)}
+  else if(e.key===" "){e.preventDefault();timer?stop():play()}
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",render);
+const params=new URLSearchParams(window.location.search);
+if(params.get("embedded")==="1")document.body.classList.add("embedded");
+const requested=params.get("mode");
+setMode(["add","search","pre","in","post"].includes(requested)?requested:"in");
+</script>
+
+</body>
+</html>

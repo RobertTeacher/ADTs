@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 19 Recursion Lab</title>
+<style>
+:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--cur:#e08a00;--hl:#ffe9a8;--blue:#3b66d1;--blue2:#e2eaff;--green:#0d8a7c;--green2:#d6f2ee;--code:#f7f8fc;--mono:Consolas,monospace}
+@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--cur:#f2b84b;--hl:#3d3112;--blue:#7fa3ff;--blue2:#1b2747;--green:#3cc4b2;--green2:#123631;--code:#111823;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:14px}.wrap{max-width:1200px;margin:auto;display:flex;flex-direction:column;gap:12px}
+header{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap}h1{margin:0;font-size:1.7rem}.sub{margin:3px 0 0;color:var(--muted)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);padding:4px;border-radius:10px}.tabs button,.ctl button{font-weight:700;border-radius:7px;cursor:pointer}.tabs button{border:0;background:transparent;color:var(--muted);padding:8px 12px}.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg)}
+.info{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;padding:10px 12px;color:var(--muted)}.info strong{color:var(--ink)}
+.ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px}.ctl button{background:var(--code);border:1px solid var(--line);min-height:40px;min-width:44px;color:var(--ink)}.ctl .primary{background:var(--cur);border-color:var(--cur);color:#1b1200;min-width:86px}.ctl input{accent-color:var(--cur)}#scrub{flex:1 1 180px}
+.grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:12px}@media(max-width:850px){.grid{grid-template-columns:1fr}}.col{display:flex;flex-direction:column;gap:12px;min-width:0}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px}.pt{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:7px}
+.code{background:var(--code);border-radius:8px;padding:7px 0;overflow:auto;font:13px/1.65 var(--mono)}.ln{display:flex;white-space:pre;border-left:3px solid transparent}.ln .n{width:34px;flex:none;text-align:right;padding-right:10px;color:var(--muted)}.ln.on{background:var(--hl);border-left-color:var(--cur)}
+.caption{min-height:86px}.tag{font:12px var(--mono);color:var(--cur)}.caption p{margin:5px 0 0}
+.stack{display:flex;flex-direction:column;gap:6px}.frame{border:1px solid var(--line);background:var(--code);border-radius:8px;padding:7px 9px;display:flex;justify-content:space-between;gap:10px;font:13px var(--mono)}.frame.top{background:var(--hl);border-color:var(--cur)}.frame.wait{background:var(--blue2);border-color:var(--blue)}.frame.ret{background:var(--green2);border-color:var(--green)}
+.phase{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.phase div{border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center;color:var(--muted)}.phase .on{background:var(--hl);border-color:var(--cur);color:var(--ink);font-weight:700}
+.vars{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font:13px var(--mono)}.vars dt{color:var(--muted)}.vars dd{margin:0;font-weight:700}
+body.embedded{padding-top:6px}body.embedded header>div:first-child{display:none}body.embedded header{justify-content:flex-end}
+</style>
+
+<style id="unit19-polish">
+:root{
+  --u19-radius:14px;
+  --u19-radius-sm:10px;
+  --u19-shadow:0 1px 2px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.045);
+}
+body{
+  padding:12px max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));
+}
+.wrap{max-width:1380px;gap:12px}
+.panel,.card,.info,.note,.complexity,.ctl{
+  border-radius:var(--u19-radius)!important;
+  box-shadow:var(--u19-shadow);
+}
+.tabs{
+  border-radius:12px!important;
+  padding:4px!important;
+  gap:4px!important;
+}
+.tabs button{
+  min-height:40px;
+  line-height:1.15;
+  white-space:nowrap;
+}
+.tabs button[aria-selected="true"]{
+  box-shadow:0 1px 2px rgba(0,0,0,.12);
+}
+.ctl{
+  position:sticky;
+  top:6px;
+  z-index:12;
+  backdrop-filter:blur(8px);
+}
+.code{
+  border:1px solid var(--line);
+  scrollbar-width:thin;
+}
+.caption{
+  border-left:4px solid var(--cur)!important;
+}
+.ptitle,.pt{
+  min-height:18px;
+  align-items:center;
+}
+table{line-height:1.35}
+button,input{touch-action:manipulation}
+@media(max-width:900px){
+  .grid{gap:10px!important}
+  .panel{padding:10px!important}
+  .tabs{width:100%}
+  .tabs button{flex:1 1 auto}
+}
+@media(max-width:560px){
+  body{padding-left:7px;padding-right:7px}
+  .ctl{top:2px;gap:5px!important;padding:7px!important}
+  .ctl button{min-width:40px!important;padding:6px 9px!important}
+  .tabs button{font-size:13px!important;padding:7px 9px!important}
+}
+</style>
+
+
+<style id="recursion-polish">
+.frame{transition:transform .15s ease,background .15s ease}
+.frame.top{transform:translateX(4px)}
+.phase div{min-height:46px;display:flex;align-items:center;justify-content:center}
+@media(prefers-reduced-motion:reduce){.frame{transition:none}}
+</style>
+
+</head>
+<body><div class="wrap">
+<header><div><h1>Recursion Lab</h1><p class="sub">Base case · general case · call stack · unwinding</p></div><div class="tabs">
+<button type="button" data-mode="countdown" aria-selected="true">Countdown</button>
+<button type="button" data-mode="sum" aria-selected="false">Recursive Sum</button>
+<button type="button" data-mode="linear" aria-selected="false">Recursive Linear Search</button>
+</div></header>
+<div class="info" id="info"></div>
+<div class="ctl"><button id="reset">⏮</button><button id="prev">◀</button><button id="play" class="primary">▶ Play</button><button id="next">▶</button><input id="scrub" type="range" min="0" max="0" value="0"><span id="count"></span><label>Speed <input id="speed" type="range" min="1" max="5" value="3"></label></div>
+<div class="grid">
+<div class="col"><div class="panel"><div class="pt"><span>Python code</span><span id="lineinfo"></span></div><div id="code" class="code"></div></div><div class="panel caption"><span id="tag" class="tag"></span><p id="cap"></p></div></div>
+<div class="col">
+<div class="panel"><div class="pt"><span>Recursive call stack</span><span>newest call on top</span></div><div id="stack" class="stack"></div></div>
+<div class="phase"><div id="p-call">Calling</div><div id="p-base">Base case</div><div id="p-unwind">Unwinding</div></div>
+<div class="panel"><div class="pt"><span>Variables / return value</span></div><div id="vars"></div></div>
+</div></div>
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const CODE={
+countdown:["def Countdown(value):","    if value <= 0:","        return","    print(value)","    Countdown(value - 1)"],
+sum:["def RecursiveSum(value):","    if value == 0:","        return 0","    return value + RecursiveSum(value - 1)"],
+linear:["def RecursiveLinearSearch(data, target, index):","    if index == len(data):","        return -1","    if data[index] == target:","        return index","    return RecursiveLinearSearch(data, target, index + 1)"]
+};
+const INFO={
+countdown:"<strong>Big O:</strong> O(n) time and O(n) call-stack space. <strong>Exam focus:</strong> every recursive call changes the state (<code>value - 1</code>) and moves toward the base case.",
+sum:"<strong>Big O:</strong> O(n) time and O(n) call-stack space. <strong>Key idea:</strong> returned values unwind through the previous calls in reverse order.",
+linear:"<strong>Big O:</strong> best O(1), worst O(n), recursive stack O(n). <strong>Exam focus:</strong> the base case for an unsuccessful search must stop when the index moves beyond the final element."
+};
+function snap(line,tag,msg,stack,vars={},phase="call"){return {line,tag,msg,stack:stack.map(x=>({...x})),vars:{...vars},phase}}
+function genCountdown(n=4){const s=[],stack=[];function rec(v){stack.push({fn:"Countdown",value:v});s.push(snap(1,"call",`Call Countdown(${v}).`,stack,{value:v},"call"));s.push(snap(2,"check",`Is ${v} <= 0? ${v<=0?"Yes.":"No."}`,stack,{value:v},v<=0?"base":"call"));if(v<=0){s.push(snap(3,"base case","Return immediately.",stack,{value:v},"base"));stack.pop();s.push(snap(3,"unwind","Control returns to the previous call.",stack,{},"unwind"));return}s.push(snap(4,"output",`Output ${v}.`,stack,{value:v},"call"));s.push(snap(5,"recursive call",`Call Countdown(${v-1}). Current call pauses.`,stack,{value:v},"call"));rec(v-1);s.push(snap(5,"unwind",`Countdown(${v-1}) has returned. Countdown(${v}) can finish.`,stack,{value:v},"unwind"));stack.pop()}rec(n);return s}
+function genSum(n=4){const s=[],stack=[];function rec(v){stack.push({fn:"RecursiveSum",value:v});s.push(snap(1,"call",`Call RecursiveSum(${v}).`,stack,{value:v},"call"));s.push(snap(2,"check",`Is value == 0? ${v===0?"Yes.":"No."}`,stack,{value:v},v===0?"base":"call"));if(v===0){s.push(snap(3,"return","Base case returns 0.",stack,{value:v,return:0},"base"));stack.pop();return 0}s.push(snap(4,"recursive call",`Need ${v} + RecursiveSum(${v-1}). Pause this call.`,stack,{value:v},"call"));const r=rec(v-1);const ans=v+r;s.push(snap(4,"unwind",`RecursiveSum(${v-1}) returned ${r}; now return ${v} + ${r} = ${ans}.`,stack,{value:v,return:ans},"unwind"));stack.pop();return ans}rec(n);return s}
+function genLinear(){const data=[37,12,58,19,44,26],target=44,s=[],stack=[];function rec(i){stack.push({fn:"Search",index:i});s.push(snap(1,"call",`Search from index ${i}.`,stack,{index:i,target},"call"));s.push(snap(2,"base check",`Is index == len(data)? ${i===data.length?"Yes.":"No."}`,stack,{index:i,target},i===data.length?"base":"call"));if(i===data.length){s.push(snap(3,"return","Reached the end. Return -1.",stack,{index:i,target,return:-1},"base"));stack.pop();return -1}s.push(snap(4,"compare",`data[${i}] is ${data[i]}. Compare with ${target}.`,stack,{index:i,target,current:data[i]},"call"));if(data[i]===target){s.push(snap(5,"return",`Match found. Return index ${i}.`,stack,{index:i,target,return:i},"unwind"));stack.pop();return i}s.push(snap(6,"recursive call",`No match. Search from index ${i+1}.`,stack,{index:i,target},"call"));const ans=rec(i+1);s.push(snap(6,"unwind",`The deeper call returned ${ans}. Pass that value back.`,stack,{index:i,target,return:ans},"unwind"));stack.pop();return ans}rec(0);return s}
+const STEPS={countdown:genCountdown(),sum:genSum(),linear:genLinear()};let mode="countdown",idx=0,timer=null;const SPEED=[1900,1300,850,520,300];
+function code(){ $("code").innerHTML=CODE[mode].map((x,i)=>`<div class="ln" data-l="${i+1}"><span class="n">${i+1}</span><span>${x.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span></div>`).join("")}
+function render(){const s=STEPS[mode][idx];document.querySelectorAll(".ln").forEach(x=>x.classList.toggle("on",+x.dataset.l===s.line));$("lineinfo").textContent=`line ${s.line}`;$("tag").textContent=`line ${s.line} · ${s.tag}`;$("cap").textContent=s.msg;$("count").textContent=`${idx+1} / ${STEPS[mode].length}`;$("scrub").max=STEPS[mode].length-1;$("scrub").value=idx;$("info").innerHTML=INFO[mode];$("stack").innerHTML=s.stack.length?s.stack.slice().reverse().map((f,i)=>`<div class="frame ${i===0?"top":"wait"}"><span>${f.fn}(${Object.values(f).slice(1).join(", ")})</span><span>${i===0?"running":"paused"}</span></div>`).join(""):'<span style="color:var(--muted)">No calls active.</span>';$("vars").innerHTML='<dl class="vars">'+Object.entries(s.vars).map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")+'</dl>';["call","base","unwind"].forEach(p=>$("p-"+p).classList.toggle("on",s.phase===p))}
+function stop(){clearInterval(timer);timer=null;$("play").textContent="▶ Play"}function step(d){idx=Math.max(0,Math.min(STEPS[mode].length-1,idx+d));render();if(idx===STEPS[mode].length-1)stop()}function play(){if(idx===STEPS[mode].length-1)idx=0;$("play").textContent="❚❚ Pause";timer=setInterval(()=>step(1),SPEED[$("speed").value-1])}function setMode(m){stop();mode=m;idx=0;document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.mode===m)));code();render()}
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));$("reset").onclick=()=>{stop();idx=0;render()};$("prev").onclick=()=>{stop();step(-1)};$("next").onclick=()=>{stop();step(1)};$("play").onclick=()=>timer?stop():play();$("scrub").oninput=e=>{stop();idx=+e.target.value;render()};$("speed").oninput=()=>{if(timer){stop();play()}};
+const p=new URLSearchParams(location.search);if(p.get("embedded")==="1")document.body.classList.add("embedded");const m=p.get("mode");setMode(Object.hasOwn(STEPS,m)?m:"countdown");
+})();
+</script></body></html>

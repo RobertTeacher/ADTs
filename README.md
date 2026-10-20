@@ -64,9 +64,9 @@ After GitHub Pages is live, paste the following into the Canvas HTML editor:
   <iframe
     src="https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/"
     title="Cambridge 9618 Unit 19 Visualizer"
-    style="display:block;width:100%;height:1450px;border:none;"
+    style="display:block;width:100%;height:1650px;border:none;"
     width="100%"
-    height="1450"
+    height="1650"
     loading="lazy"
     frameborder="0">
   </iframe>
@@ -101,3 +101,15 @@ The exam-tip page paraphrases recurring issues reported in Cambridge Principal E
 - June 2023 Paper 4: preserve the structure/functionality of a supplied sorting algorithm and copy required source data accurately.
 
 The site paraphrases these findings rather than reproducing report text.
+
+
+## UI/UX revision
+
+This version uses:
+
+- a compact sticky navigation bar so the section controls remain available while students work;
+- automatic internal tracer resizing when all pages are hosted on the same GitHub Pages origin;
+- a larger and padded Binary Search Tree viewport so root labels, target annotations and recursive states are not clipped;
+- consistent card styling, spacing and mobile breakpoints across all sections;
+- the Unit 19 convention notice at the bottom of the main visualizer rather than above the content.
+
