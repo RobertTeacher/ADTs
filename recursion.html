@@ -88,6 +88,37 @@ button,input{touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){.frame{transition:none}}
 </style>
 
+
+<style id="python-syntax-colors">
+:root{
+  --py-key:#8a3fb8;
+  --py-fn:#1f6fb5;
+  --py-num:#b0521b;
+  --py-str:#0b7a5a;
+  --py-comment:#778196;
+  --py-op:#9a5c00;
+  --py-literal:#a13f72;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --py-key:#d29bff;
+    --py-fn:#6db8ff;
+    --py-num:#ff9e64;
+    --py-str:#69d7a7;
+    --py-comment:#7f8ba2;
+    --py-op:#f0b440;
+    --py-literal:#ff91c8;
+  }
+}
+.tok-key{color:var(--py-key);font-weight:700}
+.tok-fn{color:var(--py-fn);font-weight:600}
+.tok-num{color:var(--py-num)}
+.tok-str{color:var(--py-str)}
+.tok-comment{color:var(--py-comment);font-style:italic}
+.tok-op{color:var(--py-op)}
+.tok-lit{color:var(--py-literal);font-weight:600}
+</style>
+
 </head>
 <body><div class="wrap">
 <header><div><h1>Recursion Lab</h1><p class="sub">Base case · general case · call stack · unwinding</p></div><div class="tabs">
@@ -108,6 +139,63 @@ button,input{touch-action:manipulation}
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
+
+const PY_KEYWORDS=new Set([
+  "def","return","if","elif","else","for","while","in","global","and","or","not",
+  "class","try","except","finally","raise","break","continue","pass","from","import","as"
+]);
+const PY_LITERALS=new Set(["True","False","None"]);
+const PY_FUNCTIONS=new Set([
+  "print","len","range","int","str","float","input",
+  "LinearSearch","BinarySearch","BubbleSort","InsertionSort",
+  "RecursiveBinarySearch","RecursiveInsertionSort",
+  "Countdown","RecursiveSum","RecursiveLinearSearch"
+]);
+
+function pyEscape(text){
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
+function pyHighlight(line){
+  const tokenRe=/(#.*$)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(\b[A-Za-z_]\w*\b)|(\b\d+(?:\.\d+)?\b)|([+\-*\/%<>=!]+)|(\s+)|(.?)/gm;
+  let html="";
+  let match;
+
+  while((match=tokenRe.exec(line))!==null){
+    const [token,comment,stringToken,word,numberToken,operator,space,other]=match;
+
+    if(comment){
+      html+=`<span class="tok-comment">${pyEscape(comment)}</span>`;
+    }else if(stringToken){
+      html+=`<span class="tok-str">${pyEscape(stringToken)}</span>`;
+    }else if(word){
+      if(PY_KEYWORDS.has(word)){
+        html+=`<span class="tok-key">${word}</span>`;
+      }else if(PY_LITERALS.has(word)){
+        html+=`<span class="tok-lit">${word}</span>`;
+      }else if(PY_FUNCTIONS.has(word)){
+        html+=`<span class="tok-fn">${word}</span>`;
+      }else{
+        html+=pyEscape(word);
+      }
+    }else if(numberToken){
+      html+=`<span class="tok-num">${numberToken}</span>`;
+    }else if(operator){
+      html+=`<span class="tok-op">${pyEscape(operator)}</span>`;
+    }else if(space){
+      html+=space;
+    }else if(other){
+      html+=pyEscape(other);
+    }
+
+    if(token==="") tokenRe.lastIndex++;
+  }
+  return html;
+}
+
 const CODE={
 countdown:["def Countdown(value):","    if value <= 0:","        return","    print(value)","    Countdown(value - 1)"],
 sum:["def RecursiveSum(value):","    if value == 0:","        return 0","    return value + RecursiveSum(value - 1)"],
@@ -123,7 +211,7 @@ function genCountdown(n=4){const s=[],stack=[];function rec(v){stack.push({fn:"C
 function genSum(n=4){const s=[],stack=[];function rec(v){stack.push({fn:"RecursiveSum",value:v});s.push(snap(1,"call",`Call RecursiveSum(${v}).`,stack,{value:v},"call"));s.push(snap(2,"check",`Is value == 0? ${v===0?"Yes.":"No."}`,stack,{value:v},v===0?"base":"call"));if(v===0){s.push(snap(3,"return","Base case returns 0.",stack,{value:v,return:0},"base"));stack.pop();return 0}s.push(snap(4,"recursive call",`Need ${v} + RecursiveSum(${v-1}). Pause this call.`,stack,{value:v},"call"));const r=rec(v-1);const ans=v+r;s.push(snap(4,"unwind",`RecursiveSum(${v-1}) returned ${r}; now return ${v} + ${r} = ${ans}.`,stack,{value:v,return:ans},"unwind"));stack.pop();return ans}rec(n);return s}
 function genLinear(){const data=[37,12,58,19,44,26],target=44,s=[],stack=[];function rec(i){stack.push({fn:"Search",index:i});s.push(snap(1,"call",`Search from index ${i}.`,stack,{index:i,target},"call"));s.push(snap(2,"base check",`Is index == len(data)? ${i===data.length?"Yes.":"No."}`,stack,{index:i,target},i===data.length?"base":"call"));if(i===data.length){s.push(snap(3,"return","Reached the end. Return -1.",stack,{index:i,target,return:-1},"base"));stack.pop();return -1}s.push(snap(4,"compare",`data[${i}] is ${data[i]}. Compare with ${target}.`,stack,{index:i,target,current:data[i]},"call"));if(data[i]===target){s.push(snap(5,"return",`Match found. Return index ${i}.`,stack,{index:i,target,return:i},"unwind"));stack.pop();return i}s.push(snap(6,"recursive call",`No match. Search from index ${i+1}.`,stack,{index:i,target},"call"));const ans=rec(i+1);s.push(snap(6,"unwind",`The deeper call returned ${ans}. Pass that value back.`,stack,{index:i,target,return:ans},"unwind"));stack.pop();return ans}rec(0);return s}
 const STEPS={countdown:genCountdown(),sum:genSum(),linear:genLinear()};let mode="countdown",idx=0,timer=null;const SPEED=[1900,1300,850,520,300];
-function code(){ $("code").innerHTML=CODE[mode].map((x,i)=>`<div class="ln" data-l="${i+1}"><span class="n">${i+1}</span><span>${x.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span></div>`).join("")}
+function code(){ $("code").innerHTML=CODE[mode].map((x,i)=>`<div class="ln" data-l="${i+1}"><span class="n">${i+1}</span><span>${pyHighlight(x)||" "}</span></div>`).join("")}
 function render(){const s=STEPS[mode][idx];document.querySelectorAll(".ln").forEach(x=>x.classList.toggle("on",+x.dataset.l===s.line));$("lineinfo").textContent=`line ${s.line}`;$("tag").textContent=`line ${s.line} · ${s.tag}`;$("cap").textContent=s.msg;$("count").textContent=`${idx+1} / ${STEPS[mode].length}`;$("scrub").max=STEPS[mode].length-1;$("scrub").value=idx;$("info").innerHTML=INFO[mode];$("stack").innerHTML=s.stack.length?s.stack.slice().reverse().map((f,i)=>`<div class="frame ${i===0?"top":"wait"}"><span>${f.fn}(${Object.values(f).slice(1).join(", ")})</span><span>${i===0?"running":"paused"}</span></div>`).join(""):'<span style="color:var(--muted)">No calls active.</span>';$("vars").innerHTML='<dl class="vars">'+Object.entries(s.vars).map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")+'</dl>';["call","base","unwind"].forEach(p=>$("p-"+p).classList.toggle("on",s.phase===p))}
 function stop(){clearInterval(timer);timer=null;$("play").textContent="▶ Play"}function step(d){idx=Math.max(0,Math.min(STEPS[mode].length-1,idx+d));render();if(idx===STEPS[mode].length-1)stop()}function play(){if(idx===STEPS[mode].length-1)idx=0;$("play").textContent="❚❚ Pause";timer=setInterval(()=>step(1),SPEED[$("speed").value-1])}function setMode(m){stop();mode=m;idx=0;document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.mode===m)));code();render()}
 document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));$("reset").onclick=()=>{stop();idx=0;render()};$("prev").onclick=()=>{stop();step(-1)};$("next").onclick=()=>{stop();step(1)};$("play").onclick=()=>timer?stop():play();$("scrub").oninput=e=>{stop();idx=+e.target.value;render()};$("speed").oninput=()=>{if(timer){stop();play()}};
