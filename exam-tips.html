@@ -1,85 +1,64 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Unit 19 Examiner Tips</title>
 <style>
-:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--accent:#e08a00;--blue:#3b66d1;--blue2:#e2eaff}
-@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--accent:#f2b84b;--blue:#7fa3ff;--blue2:#1b2747;color-scheme:dark}}
-*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:14px}.wrap{max-width:1180px;margin:auto;display:flex;flex-direction:column;gap:12px}h1{margin:0;font-size:1.75rem}.sub{margin:4px 0 0;color:var(--muted)}.note{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:10px;padding:10px 12px;color:var(--muted)}.note strong{color:var(--ink)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}@media(max-width:760px){.grid{grid-template-columns:1fr}}.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.card h2{font-size:1.05rem;margin:0 0 6px}.card p{margin:0;color:var(--muted)}.src{margin-top:8px;font-size:11.5px;color:var(--blue);font-weight:700}.tag{display:inline-block;background:var(--blue2);color:var(--blue);padding:2px 6px;border-radius:5px;font-size:11px;margin-bottom:6px}.footer{font-size:12.5px;color:var(--muted)}
+:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--orange:#e08a00;--orange2:#fff0cc;--blue:#3b66d1;--blue2:#e7edff;--green:#0d8a7c;--green2:#d9f4ef;--red:#b84a4a;--red2:#fae2e2;--code:#f7f8fc;--shadow:0 1px 2px rgba(20,30,50,.05),0 10px 30px rgba(20,30,50,.055)}
+@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--orange:#f2b84b;--orange2:#3d3112;--blue:#7fa3ff;--blue2:#1b2747;--green:#3cc4b2;--green2:#123631;--red:#ff8a8a;--red2:#3b2020;--code:#111823;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:12px}.wrap{max-width:1240px;margin:auto;display:flex;flex-direction:column;gap:12px}.hero,.tip,.checklist{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.hero{padding:14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.kicker{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:6px}h1{margin:0 0 4px;font-size:clamp(1.55rem,3vw,2.05rem)}.sub{margin:0;color:var(--muted);max-width:75ch}.hero-stat{max-width:250px;border:1px solid var(--line);border-radius:11px;background:var(--code);padding:10px 12px}.hero-stat strong,.hero-stat span{display:block}.hero-stat span{color:var(--muted);font-size:12px;margin-top:2px}.filters{display:flex;gap:5px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:var(--shadow)}.filters button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:8px 11px;border-radius:8px;cursor:pointer}.filters button[aria-pressed=true]{background:var(--ink);color:var(--bg)}.priority{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.priority-card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:12px;padding:10px;box-shadow:var(--shadow)}.priority-card b,.priority-card span{display:block}.priority-card span{color:var(--muted);font-size:12px;margin-top:3px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.tip{overflow:hidden}.tip-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 12px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--code))}.topic{display:flex;gap:7px;align-items:center}.tag{font-size:11px;font-weight:800;padding:3px 7px;border-radius:999px;background:var(--blue2);color:var(--blue)}.tip h2{font-size:1rem;margin:0}.source{font-size:10.5px;color:var(--muted);text-align:right}.tip-body{padding:11px 12px}.pattern,.action{border-radius:8px;padding:8px 9px}.pattern{border-left:4px solid var(--red);background:var(--red2);margin-bottom:9px}.action{border-left:4px solid var(--green);background:var(--green2)}.label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-bottom:2px}.pattern .label{color:var(--red)}.action .label{color:var(--green)}.tip p{margin:0}.checklist{padding:12px}.checklist h2{margin:0 0 9px;font-size:1rem}.checks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.check{border:1px solid var(--line);background:var(--code);border-radius:10px;padding:9px;display:flex;gap:8px}.box{width:18px;height:18px;border:2px solid var(--orange);border-radius:5px;flex:none}.check b,.check span{display:block}.check b{font-size:12.5px}.check span{font-size:11.5px;color:var(--muted);margin-top:1px}.footer{font-size:12px;color:var(--muted)}.hidden{display:none!important}@media(max-width:900px){.hero{grid-template-columns:1fr}.hero-stat{max-width:none}.priority{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.checks{grid-template-columns:1fr}}@media(max-width:560px){body{padding:7px}.priority{grid-template-columns:1fr}}
 </style>
-<style id="unit19-polish">
-:root{
-  --u19-radius:14px;
-  --u19-radius-sm:10px;
-  --u19-shadow:0 1px 2px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.045);
-}
-body{
-  padding:12px max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));
-}
-.wrap{max-width:1380px;gap:12px}
-.panel,.card,.info,.note,.complexity,.ctl{
-  border-radius:var(--u19-radius)!important;
-  box-shadow:var(--u19-shadow);
-}
-.tabs{
-  border-radius:12px!important;
-  padding:4px!important;
-  gap:4px!important;
-}
-.tabs button{
-  min-height:40px;
-  line-height:1.15;
-  white-space:nowrap;
-}
-.tabs button[aria-selected="true"]{
-  box-shadow:0 1px 2px rgba(0,0,0,.12);
-}
-.ctl{
-  position:sticky;
-  top:6px;
-  z-index:12;
-  backdrop-filter:blur(8px);
-}
-.code{
-  border:1px solid var(--line);
-  scrollbar-width:thin;
-}
-.caption{
-  border-left:4px solid var(--cur)!important;
-}
-.ptitle,.pt{
-  min-height:18px;
-  align-items:center;
-}
-table{line-height:1.35}
-button,input{touch-action:manipulation}
-@media(max-width:900px){
-  .grid{gap:10px!important}
-  .panel{padding:10px!important}
-  .tabs{width:100%}
-  .tabs button{flex:1 1 auto}
-}
-@media(max-width:560px){
-  body{padding-left:7px;padding-right:7px}
-  .ctl{top:2px;gap:5px!important;padding:7px!important}
-  .ctl button{min-width:40px!important;padding:6px 9px!important}
-  .tabs button{font-size:13px!important;padding:7px 9px!important}
-}
-</style>
+</head>
+<body><div class="wrap">
+<section class="hero"><div><div class="kicker">Principal Examiner Reports → practical revision</div><h1>Examiner-informed Paper 4 Tips</h1><p class="sub">Use these as a debugging checklist. Broad algorithm knowledge can still lose marks if pointer meanings, bounds, return values, data types or required evidence are handled incorrectly.</p></div><div class="hero-stat"><strong>Best use</strong><span>Read one tip, replay the related visualizer, and identify exactly where that error would occur.</span></div></section>
 
-</head><body><div class="wrap">
-<div><h1>Examiner-informed Paper 4 Tips</h1><p class="sub">Paraphrased from Cambridge Principal Examiner Reports and aligned to the Unit 19 visualisers.</p></div>
-<div class="note"><strong>How to use these:</strong> treat each tip as a debugging checklist. The reports repeatedly show that candidates often know the broad algorithm but lose marks through pointer conventions, boundary conditions, return values, data types, or by replacing the requested algorithm with a different one.</div>
-<div class="grid">
-<div class="card"><span class="tag">Queue</span><h2>Use the variables the question provides</h2><p>If <code>NumberItems</code> is supplied, use it for full/empty checks. Store new data at the tail, remove from the head, and wrap circular pointers correctly. Do not increment both pointers during one enqueue.</p><div class="src">June 2025 — Paper 41/43 Practical</div></div>
-<div class="card"><span class="tag">Stack</span><h2>Follow the stated TopPointer convention</h2><p>A full check depends on whether the pointer represents the last occupied position or the next free position. Do not use <code>append()</code> when the task explicitly requires an array and pointer implementation.</p><div class="src">June 2025 — Paper 42 Practical</div></div>
-<div class="card"><span class="tag">Binary search</span><h2>Boundary updates must remove the midpoint</h2><p>Use a condition equivalent to <code>low &lt;= high</code>. When the target is larger, move to <code>mid + 1</code>; when smaller, use <code>mid - 1</code>. A linear search is not a substitute when binary search is requested.</p><div class="src">June 2025 — Paper 43 Practical</div></div>
-<div class="card"><span class="tag">Sorting</span><h2>Do not change the requested algorithm</h2><p>When an incomplete algorithm is provided, preserve its structure and functionality. Examiner reports noted candidates changing the algorithm or reverting to a different sort. Keep paired data together when swapping records.</p><div class="src">June 2023 & June 2025 examiner reports</div></div>
-<div class="card"><span class="tag">Linked structures</span><h2>Follow pointers, not storage order</h2><p>For linked lists and trees, the physical array order is not the traversal order. Update the correct links, keep track of the previous/current nodes when deleting, and reconnect the structure before reusing a freed node.</p><div class="src">June 2025 — Practical comments on linked/tree structures</div></div>
-<div class="card"><span class="tag">Binary tree</span><h2>Respect null pointers and object/method relationships</h2><p>Tree answers lose marks when nodes are connected to the wrong pointer field, null links are omitted, or a method is called as a standalone function. In recursive tree code, pass the correct child node/reference.</p><div class="src">June 2025 — Paper 41 Practical</div></div>
-<div class="card"><span class="tag">Recursion</span><h2>Show both the general case and the base case</h2><p>A recursive algorithm must call itself, have a terminating base case, and change state toward that base case. When tracing, remember that completed calls return through the suspended calls on the stack.</p><div class="src">June 2025 examiner report + O/N 2025 recursion marking guidance</div></div>
-<div class="card"><span class="tag">Return values</span><h2>Nothing runs after a return in that call</h2><p>Update pointers and counters before returning. If a function returns data needed by the next task, store or use that returned value rather than ignoring it.</p><div class="src">June 2025 — Practical reports</div></div>
-<div class="card"><span class="tag">Data types</span><h2>Copy supplied data exactly</h2><p>The reports highlight errors such as using integer <code>-1</code> when the question supplied the string <code>"-1"</code>. Match the required type and convert pseudocode operators to the syntax of your chosen language.</p><div class="src">June 2025 — Paper 42 Practical</div></div>
-<div class="card"><span class="tag">Evidence document</span><h2>Make testing evidence readable</h2><p>Copy program code as text into the evidence document. Use screenshots for test results, ensure inputs and outputs are fully visible, and keep the evidence legible.</p><div class="src">June 2023 & June 2025 Paper 4 key messages</div></div>
+<div class="filters"><button data-filter="all" aria-pressed="true">All</button><button data-filter="adt" aria-pressed="false">Pointers & ADTs</button><button data-filter="alg" aria-pressed="false">Searching & Sorting</button><button data-filter="rec" aria-pressed="false">Trees & Recursion</button><button data-filter="evidence" aria-pressed="false">Evidence & Types</button></div>
+
+<section class="priority">
+<div class="priority-card"><b>Pointer meaning first</b><span>Never assume what Head, Tail or Top represents.</span></div>
+<div class="priority-card"><b>Bounds must move</b><span>Binary search must remove the midpoint from the next range.</span></div>
+<div class="priority-card"><b>Return after updates</b><span>Pointer and counter updates must happen before exit.</span></div>
+<div class="priority-card"><b>Keep the requested algorithm</b><span>Do not substitute another search or sort.</span></div>
+</section>
+
+<section class="grid">
+<article class="tip" data-cat="adt"><div class="tip-head"><div class="topic"><span class="tag">Queue</span><h2>Use the variables provided</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Head/Tail roles were mixed up, circular wrap-around was missed, or <code>NumberItems</code> was not used consistently.</p></div><div class="action"><span class="label">Before you submit</span><p>State what each pointer means, verify full/empty conditions, and test the final index wrapping to 0.</p></div></div></article>
+
+<article class="tip" data-cat="adt"><div class="tip-head"><div class="topic"><span class="tag">Stack</span><h2>Follow the TopPointer convention</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Full/empty checks were wrong because candidates assumed a different pointer meaning or used <code>append()</code> instead of the required array-and-pointer method.</p></div><div class="action"><span class="label">Before you submit</span><p>Write one sentence: “TopPointer means …”. Make every check and update match it.</p></div></div></article>
+
+<article class="tip" data-cat="alg"><div class="tip-head"><div class="topic"><span class="tag">Binary search</span><h2>Remove the midpoint</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Incorrect loop conditions and bounds such as <code>mid</code> instead of <code>mid + 1</code> / <code>mid - 1</code> caused non-terminating or incomplete searches.</p></div><div class="action"><span class="label">Before you submit</span><p>Check that every iteration makes the search range smaller and an unsuccessful search can terminate.</p></div></div></article>
+
+<article class="tip" data-cat="alg"><div class="tip-head"><div class="topic"><span class="tag">Sorting</span><h2>Keep the requested algorithm</h2></div><span class="source">June 2023 / 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Some candidates altered the supplied algorithm or effectively implemented a different sort.</p></div><div class="action"><span class="label">Before you submit</span><p>Insertion sort stores a key and shifts. Bubble sort compares adjacent items and swaps. Match the requested method.</p></div></div></article>
+
+<article class="tip" data-cat="adt"><div class="tip-head"><div class="topic"><span class="tag">Linked structures</span><h2>Follow pointers, not array order</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Physical array order was treated as logical list order, or deletion changed the wrong pointer.</p></div><div class="action"><span class="label">Before you submit</span><p>Trace <code>Current</code> and <code>Previous</code>. Reconnect the active list before returning a node to the free list.</p></div></div></article>
+
+<article class="tip" data-cat="rec"><div class="tip-head"><div class="topic"><span class="tag">Binary tree</span><h2>Pass the correct child reference</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Marks were lost through wrong child fields, omitted null links, or incorrect method/function references.</p></div><div class="action"><span class="label">Before you submit</span><p>For each recursive call, identify whether you are passing the left child, right child or the null/base case.</p></div></div></article>
+
+<article class="tip" data-cat="rec"><div class="tip-head"><div class="topic"><span class="tag">Recursion</span><h2>Base case + progress</h2></div><span class="source">2025 reports / marking guidance</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Recursive solutions failed when they had no terminating base case or the recursive call did not move toward it.</p></div><div class="action"><span class="label">Before you submit</span><p>Underline the base case and circle the expression that changes on every recursive call.</p></div></div></article>
+
+<article class="tip" data-cat="evidence"><div class="tip-head"><div class="topic"><span class="tag">Return values</span><h2>Update first, return last</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Some state changes were placed after <code>return</code>, or a returned value required later was ignored.</p></div><div class="action"><span class="label">Before you submit</span><p>Check the final lines of every function: update state, then return; store the returned value when needed.</p></div></div></article>
+
+<article class="tip" data-cat="evidence"><div class="tip-head"><div class="topic"><span class="tag">Data types</span><h2>Copy supplied data exactly</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Type mismatches occurred when candidates changed supplied representations, including sentinel values.</p></div><div class="action"><span class="label">Before you submit</span><p>Check quotes, integer conversion and sentinel values against the question before debugging the algorithm.</p></div></div></article>
+
+<article class="tip" data-cat="evidence"><div class="tip-head"><div class="topic"><span class="tag">Evidence document</span><h2>Make tests readable</h2></div><span class="source">June 2023 / 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Evidence lost value when code, test input or output could not be read clearly.</p></div><div class="action"><span class="label">Before you submit</span><p>Keep code readable and ensure required test input and resulting output are clearly visible.</p></div></div></article>
+</section>
+
+<section class="checklist"><h2>30-second final check</h2><div class="checks">
+<div class="check"><span class="box"></span><div><b>Names match</b><span>Functions, parameters and variables match the question.</span></div></div>
+<div class="check"><span class="box"></span><div><b>Bounds terminate</b><span>Loops and recursion move toward a stopping condition.</span></div></div>
+<div class="check"><span class="box"></span><div><b>Pointers are consistent</b><span>Full, empty, insert and delete logic use one convention.</span></div></div>
+<div class="check"><span class="box"></span><div><b>Return is last</b><span>Required state updates happen before exit.</span></div></div>
+<div class="check"><span class="box"></span><div><b>Algorithm is the requested one</b><span>No shortcut has replaced the required method.</span></div></div>
+<div class="check"><span class="box"></span><div><b>Evidence is readable</b><span>Inputs and outputs can be seen clearly.</span></div></div>
+</div></section>
+
+<p class="footer">Concise paraphrases for revision, not quotations. The exact examination question always takes priority.</p>
 </div>
-<div class="footer">These are concise paraphrases for revision, not quotations. Always read the current question carefully: exact names, parameters, pointer meanings, test data and required output formats override any convention used in a practice resource.</div>
-</div></body></html>
+<script>
+(()=>{
+ const buttons=[...document.querySelectorAll("[data-filter]")],cards=[...document.querySelectorAll(".tip")];
+ function apply(f){buttons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.filter===f)));cards.forEach(c=>c.classList.toggle("hidden",!(f==="all"||c.dataset.cat===f)))}
+ buttons.forEach(b=>b.addEventListener("click",()=>apply(b.dataset.filter)));
+})();
+</script>
+</body></html>
