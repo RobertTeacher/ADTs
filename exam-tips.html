@@ -1,62 +1,136 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Unit 19 Examiner Tips</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 19 Student Exam Playbook</title>
 <style>
-:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--orange:#e08a00;--orange2:#fff0cc;--blue:#3b66d1;--blue2:#e7edff;--green:#0d8a7c;--green2:#d9f4ef;--red:#b84a4a;--red2:#fae2e2;--code:#f7f8fc;--shadow:0 1px 2px rgba(20,30,50,.05),0 10px 30px rgba(20,30,50,.055)}
-@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--orange:#f2b84b;--orange2:#3d3112;--blue:#7fa3ff;--blue2:#1b2747;--green:#3cc4b2;--green2:#123631;--red:#ff8a8a;--red2:#3b2020;--code:#111823;color-scheme:dark}}
-*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:12px}.wrap{max-width:1240px;margin:auto;display:flex;flex-direction:column;gap:12px}.hero,.tip,.checklist{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.hero{padding:14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.kicker{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:6px}h1{margin:0 0 4px;font-size:clamp(1.55rem,3vw,2.05rem)}.sub{margin:0;color:var(--muted);max-width:75ch}.hero-stat{max-width:250px;border:1px solid var(--line);border-radius:11px;background:var(--code);padding:10px 12px}.hero-stat strong,.hero-stat span{display:block}.hero-stat span{color:var(--muted);font-size:12px;margin-top:2px}.filters{display:flex;gap:5px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:var(--shadow)}.filters button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:8px 11px;border-radius:8px;cursor:pointer}.filters button[aria-pressed=true]{background:var(--ink);color:var(--bg)}.priority{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.priority-card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:12px;padding:10px;box-shadow:var(--shadow)}.priority-card b,.priority-card span{display:block}.priority-card span{color:var(--muted);font-size:12px;margin-top:3px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.tip{overflow:hidden}.tip-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 12px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--code))}.topic{display:flex;gap:7px;align-items:center}.tag{font-size:11px;font-weight:800;padding:3px 7px;border-radius:999px;background:var(--blue2);color:var(--blue)}.tip h2{font-size:1rem;margin:0}.source{font-size:10.5px;color:var(--muted);text-align:right}.tip-body{padding:11px 12px}.pattern,.action{border-radius:8px;padding:8px 9px}.pattern{border-left:4px solid var(--red);background:var(--red2);margin-bottom:9px}.action{border-left:4px solid var(--green);background:var(--green2)}.label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-bottom:2px}.pattern .label{color:var(--red)}.action .label{color:var(--green)}.tip p{margin:0}.checklist{padding:12px}.checklist h2{margin:0 0 9px;font-size:1rem}.checks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.check{border:1px solid var(--line);background:var(--code);border-radius:10px;padding:9px;display:flex;gap:8px}.box{width:18px;height:18px;border:2px solid var(--orange);border-radius:5px;flex:none}.check b,.check span{display:block}.check b{font-size:12.5px}.check span{font-size:11.5px;color:var(--muted);margin-top:1px}.footer{font-size:12px;color:var(--muted)}.hidden{display:none!important}@media(max-width:900px){.hero{grid-template-columns:1fr}.hero-stat{max-width:none}.priority{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.checks{grid-template-columns:1fr}}@media(max-width:560px){body{padding:7px}.priority{grid-template-columns:1fr}}
+:root{--bg:#f3f5fa;--panel:#fff;--ink:#1a2333;--muted:#5a6578;--line:#dbe1ec;--orange:#e08a00;--orange2:#fff0cc;--blue:#3b66d1;--blue2:#e7edff;--green:#0d8a7c;--green2:#d9f4ef;--red:#b84a4a;--red2:#fae2e2;--violet:#7652a8;--violet2:#eee6fb;--code:#f7f8fc;--shadow:0 1px 2px rgba(20,30,50,.05),0 10px 30px rgba(20,30,50,.055)}
+@media(prefers-color-scheme:dark){:root{--bg:#0e131b;--panel:#151c27;--ink:#e5eaf3;--muted:#97a2b6;--line:#263040;--orange:#f2b84b;--orange2:#3d3112;--blue:#7fa3ff;--blue2:#1b2747;--green:#3cc4b2;--green2:#123631;--red:#ff8a8a;--red2:#3b2020;--violet:#c9a1ff;--violet2:#2a203b;--code:#111823;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:15px/1.5 Arial,sans-serif;padding:12px}.wrap{max-width:1260px;margin:auto;display:flex;flex-direction:column;gap:12px}.hero,.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.hero{padding:15px;display:grid;grid-template-columns:1.25fr .75fr;gap:14px;align-items:end}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:6px}h1{margin:0 0 4px;font-size:clamp(1.6rem,3vw,2.1rem)}.sub{margin:0;color:var(--muted)}.hero-side{border:1px solid var(--line);background:var(--code);border-radius:11px;padding:10px 12px}.hero-side strong,.hero-side span{display:block}.hero-side span{color:var(--muted);font-size:12px;margin-top:3px}.message{padding:11px 13px;border-left:5px solid var(--blue);background:var(--panel);border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.message p{margin:3px 0 0;color:var(--muted)}.filters{display:flex;gap:5px;flex-wrap:wrap;padding:5px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}.filters button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:8px 11px;border-radius:8px;cursor:pointer}.filters button[aria-pressed=true]{background:var(--ink);color:var(--bg)}.timeline{padding:12px}.timeline h2,.patterns h2{margin:0 0 9px;font-size:1rem}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.step{border:1px solid var(--line);background:var(--code);border-radius:11px;padding:10px}.num{display:inline-flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;background:var(--blue2);color:var(--blue);font-weight:800;margin-bottom:6px}.step b,.step span{display:block}.step span{font-size:12px;color:var(--muted);margin-top:3px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{overflow:hidden}.head{padding:11px 12px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--code));display:flex;justify-content:space-between;gap:10px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px}.tag{font-size:10.5px;font-weight:800;padding:3px 7px;border-radius:999px;background:var(--blue2);color:var(--blue)}.tag.report{background:var(--violet2);color:var(--violet)}.card h2{font-size:1rem;margin:0}.one{font-size:12px;color:var(--muted);margin:2px 0 0}.source{font-size:10.5px;color:var(--muted);text-align:right;white-space:nowrap}.body{padding:11px 12px;display:grid;gap:9px}.box{border-radius:9px;padding:9px 10px}.context{background:var(--code);border:1px solid var(--line)}.lesson{background:var(--red2);border-left:4px solid var(--red)}.strategy{background:var(--green2);border-left:4px solid var(--green)}.example{background:var(--orange2);border-left:4px solid var(--orange)}.label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-bottom:2px}.context .label{color:var(--blue)}.lesson .label{color:var(--red)}.strategy .label{color:var(--green)}.example .label{color:var(--orange)}.body p{margin:0}.code{margin-top:5px;padding:7px 8px;border-radius:7px;background:var(--panel);border:1px solid var(--line);font:12.5px/1.45 Consolas,monospace;overflow:auto}.check{display:flex;gap:7px;align-items:flex-start;font-size:12.5px}.checkbox{width:17px;height:17px;border:2px solid var(--orange);border-radius:5px;flex:none;margin-top:1px}.patterns{padding:12px}.pattern-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.pattern{border:1px solid var(--line);background:var(--code);border-radius:10px;padding:9px}.pattern b,.pattern span{display:block}.pattern span{font-size:11.5px;color:var(--muted);margin-top:2px}.footer{font-size:12px;color:var(--muted)}.hidden{display:none!important}@media(max-width:900px){.hero{grid-template-columns:1fr}.steps,.pattern-grid{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.source{white-space:normal}}@media(max-width:560px){body{padding:7px}.steps,.pattern-grid{grid-template-columns:1fr}.filters button{flex:1 1 40%}}
 </style>
 </head>
 <body><div class="wrap">
-<section class="hero"><div><div class="kicker">Principal Examiner Reports → practical revision</div><h1>Examiner-informed Paper 4 Tips</h1><p class="sub">Use these as a debugging checklist. Broad algorithm knowledge can still lose marks if pointer meanings, bounds, return values, data types or required evidence are handled incorrectly.</p></div><div class="hero-stat"><strong>Best use</strong><span>Read one tip, replay the related visualizer, and identify exactly where that error would occur.</span></div></section>
+<section class="hero"><div><div class="eyebrow">Examiner reports → student strategy</div><h1>Paper 4 Student Exam Playbook</h1><p class="sub">Examiner reports are written for teachers. This page translates their recurring observations into practical habits you can use while coding, testing and preparing evidence.</p></div><div class="hero-side"><strong>The key mindset</strong><span>Paper 4 does not only test whether your program runs. It tests whether you implement the exact structure, algorithm, function contract and evidence requested.</span></div></section>
 
-<div class="filters"><button data-filter="all" aria-pressed="true">All</button><button data-filter="adt" aria-pressed="false">Pointers & ADTs</button><button data-filter="alg" aria-pressed="false">Searching & Sorting</button><button data-filter="rec" aria-pressed="false">Trees & Recursion</button><button data-filter="evidence" aria-pressed="false">Evidence & Types</button></div>
+<div class="message"><strong>What the reports are really telling you:</strong><p>Many marks are lost by solving a slightly different problem from the one set. Stronger responses tend to read the specification literally, preserve the required algorithm, manage state carefully and test the exact case requested.</p></div>
 
-<section class="priority">
-<div class="priority-card"><b>Pointer meaning first</b><span>Never assume what Head, Tail or Top represents.</span></div>
-<div class="priority-card"><b>Bounds must move</b><span>Binary search must remove the midpoint from the next range.</span></div>
-<div class="priority-card"><b>Return after updates</b><span>Pointer and counter updates must happen before exit.</span></div>
-<div class="priority-card"><b>Keep the requested algorithm</b><span>Do not substitute another search or sort.</span></div>
-</section>
+<div class="filters">
+<button data-filter="all" aria-pressed="true">All advice</button>
+<button data-filter="spec" aria-pressed="false">Specification</button>
+<button data-filter="alg" aria-pressed="false">Searching & Sorting</button>
+<button data-filter="adt" aria-pressed="false">ADTs</button>
+<button data-filter="files" aria-pressed="false">Files & Functions</button>
+<button data-filter="evidence" aria-pressed="false">Testing & Evidence</button>
+</div>
 
-<section class="grid">
-<article class="tip" data-cat="adt"><div class="tip-head"><div class="topic"><span class="tag">Queue</span><h2>Use the variables provided</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Head/Tail roles were mixed up, circular wrap-around was missed, or <code>NumberItems</code> was not used consistently.</p></div><div class="action"><span class="label">Before you submit</span><p>State what each pointer means, verify full/empty conditions, and test the final index wrapping to 0.</p></div></div></article>
-
-<article class="tip" data-cat="adt"><div class="tip-head"><div class="topic"><span class="tag">Stack</span><h2>Follow the TopPointer convention</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Full/empty checks were wrong because candidates assumed a different pointer meaning or used <code>append()</code> instead of the required array-and-pointer method.</p></div><div class="action"><span class="label">Before you submit</span><p>Write one sentence: “TopPointer means …”. Make every check and update match it.</p></div></div></article>
-
-<article class="tip" data-cat="alg"><div class="tip-head"><div class="topic"><span class="tag">Binary search</span><h2>Remove the midpoint</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Incorrect loop conditions and bounds such as <code>mid</code> instead of <code>mid + 1</code> / <code>mid - 1</code> caused non-terminating or incomplete searches.</p></div><div class="action"><span class="label">Before you submit</span><p>Check that every iteration makes the search range smaller and an unsuccessful search can terminate.</p></div></div></article>
-
-<article class="tip" data-cat="alg"><div class="tip-head"><div class="topic"><span class="tag">Sorting</span><h2>Keep the requested algorithm</h2></div><span class="source">June 2023 / 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Some candidates altered the supplied algorithm or effectively implemented a different sort.</p></div><div class="action"><span class="label">Before you submit</span><p>Insertion sort stores a key and shifts. Bubble sort compares adjacent items and swaps. Match the requested method.</p></div></div></article>
-
-<article class="tip" data-cat="adt"><div class="tip-head"><div class="topic"><span class="tag">Linked structures</span><h2>Follow pointers, not array order</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Physical array order was treated as logical list order, or deletion changed the wrong pointer.</p></div><div class="action"><span class="label">Before you submit</span><p>Trace <code>Current</code> and <code>Previous</code>. Reconnect the active list before returning a node to the free list.</p></div></div></article>
-
-<article class="tip" data-cat="rec"><div class="tip-head"><div class="topic"><span class="tag">Binary tree</span><h2>Pass the correct child reference</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Marks were lost through wrong child fields, omitted null links, or incorrect method/function references.</p></div><div class="action"><span class="label">Before you submit</span><p>For each recursive call, identify whether you are passing the left child, right child or the null/base case.</p></div></div></article>
-
-<article class="tip" data-cat="rec"><div class="tip-head"><div class="topic"><span class="tag">Recursion</span><h2>Base case + progress</h2></div><span class="source">2025 reports / marking guidance</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Recursive solutions failed when they had no terminating base case or the recursive call did not move toward it.</p></div><div class="action"><span class="label">Before you submit</span><p>Underline the base case and circle the expression that changes on every recursive call.</p></div></div></article>
-
-<article class="tip" data-cat="evidence"><div class="tip-head"><div class="topic"><span class="tag">Return values</span><h2>Update first, return last</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Some state changes were placed after <code>return</code>, or a returned value required later was ignored.</p></div><div class="action"><span class="label">Before you submit</span><p>Check the final lines of every function: update state, then return; store the returned value when needed.</p></div></div></article>
-
-<article class="tip" data-cat="evidence"><div class="tip-head"><div class="topic"><span class="tag">Data types</span><h2>Copy supplied data exactly</h2></div><span class="source">June 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Type mismatches occurred when candidates changed supplied representations, including sentinel values.</p></div><div class="action"><span class="label">Before you submit</span><p>Check quotes, integer conversion and sentinel values against the question before debugging the algorithm.</p></div></div></article>
-
-<article class="tip" data-cat="evidence"><div class="tip-head"><div class="topic"><span class="tag">Evidence document</span><h2>Make tests readable</h2></div><span class="source">June 2023 / 2025</span></div><div class="tip-body"><div class="pattern"><span class="label">Examiner pattern</span><p>Evidence lost value when code, test input or output could not be read clearly.</p></div><div class="action"><span class="label">Before you submit</span><p>Keep code readable and ensure required test input and resulting output are clearly visible.</p></div></div></article>
-</section>
-
-<section class="checklist"><h2>30-second final check</h2><div class="checks">
-<div class="check"><span class="box"></span><div><b>Names match</b><span>Functions, parameters and variables match the question.</span></div></div>
-<div class="check"><span class="box"></span><div><b>Bounds terminate</b><span>Loops and recursion move toward a stopping condition.</span></div></div>
-<div class="check"><span class="box"></span><div><b>Pointers are consistent</b><span>Full, empty, insert and delete logic use one convention.</span></div></div>
-<div class="check"><span class="box"></span><div><b>Return is last</b><span>Required state updates happen before exit.</span></div></div>
-<div class="check"><span class="box"></span><div><b>Algorithm is the requested one</b><span>No shortcut has replaced the required method.</span></div></div>
-<div class="check"><span class="box"></span><div><b>Evidence is readable</b><span>Inputs and outputs can be seen clearly.</span></div></div>
+<section class="panel timeline"><h2>A routine to use on every practical task</h2><div class="steps">
+<div class="step"><span class="num">1</span><b>Before coding</b><span>Underline exact names, parameters, types, pointer meanings, return values and the required algorithm.</span></div>
+<div class="step"><span class="num">2</span><b>While coding</b><span>After each pointer, index or counter update, check what that variable means now.</span></div>
+<div class="step"><span class="num">3</span><b>Before evidence</b><span>Run the exact test requested and make the result easy for an examiner to read.</span></div>
 </div></section>
 
-<p class="footer">Concise paraphrases for revision, not quotations. The exact examination question always takes priority.</p>
+<section class="grid">
+
+<article class="card" data-cat="spec"><div class="head"><div><div class="tags"><span class="tag">Specification</span><span class="tag report">Report insight</span></div><h2>Do not solve the version you remember</h2><p class="one">Representations and pointer conventions can change between papers.</p></div><span class="source">June 2023 P41/42/43</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>The reports warn that some candidates built a familiar data structure instead of the one specified. Queue questions can also define TailPointer differently.</p></div>
+<div class="box lesson"><span class="label">Why this matters</span><p>Your program may look sensible but still be wrong for that question if the representation, initial values or pointer meanings differ.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Before coding, write a tiny contract: <strong>structure + pointer meaning + initial values + required return.</strong></p></div>
+<div class="box example"><span class="label">Example</span><div class="code">TailPointer = next free position
+NumberItems = number stored
+Full when NumberItems == len(Queue)</div><p>If the paper defines TailPointer differently, change the contract first.</p></div>
+<div class="check"><span class="checkbox"></span><span>I can explain what every pointer means before I use it.</span></div>
+</div></article>
+
+<article class="card" data-cat="alg"><div class="head"><div><div class="tags"><span class="tag">Linear search</span><span class="tag report">Function contract</span></div><h2>A search does not always return an index</h2><p class="one">The required result matters as much as the search method.</p></div><span class="source">June 2023 P41/43 Q1</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>Candidates were asked to use linear search to count occurrences. Some returned a matching index instead; others read the target inside the function instead of accepting it as a parameter.</p></div>
+<div class="box lesson"><span class="label">Transferable lesson</span><p>“Use linear search” describes the method. The function contract decides whether you return a count, index, Boolean or record.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Write the function header and expected return in plain English before writing the loop.</p></div>
+<div class="box example"><span class="label">Quick comparison</span><div class="code">first position → return index
+count occurrences → keep searching, return count
+exists? → return True / False</div></div>
+<div class="check"><span class="checkbox"></span><span>My return value answers the exact question asked.</span></div>
+</div></article>
+
+<article class="card" data-cat="alg"><div class="head"><div><div class="tags"><span class="tag">Sorting</span><span class="tag report">Given algorithm</span></div><h2>Preserve the algorithm Cambridge gives you</h2><p class="one">Translate it; do not redesign it unless asked.</p></div><span class="source">June 2023 P42 Q1</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>An incomplete sorting algorithm had to be completed and rewritten in the chosen language. Some candidates made large changes that altered its functionality.</p></div>
+<div class="box lesson"><span class="label">Why this matters</span><p>A correct final list does not prove you implemented the required algorithm. Marks can depend on its specified structure and operations.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Map pseudocode line by line into Python. Replace pseudocode functions with Python equivalents, but preserve the control flow.</p></div>
+<div class="box example"><span class="label">Ask yourself</span><p>Am I translating the given algorithm, or replacing it with the algorithm I prefer?</p></div>
+<div class="check"><span class="checkbox"></span><span>The defining behaviour of the requested sort is still visible.</span></div>
+</div></article>
+
+<article class="card" data-cat="adt"><div class="head"><div><div class="tags"><span class="tag">Circular queue</span><span class="tag report">Pointer state</span></div><h2>A circular queue must actually wrap</h2><p class="one">Incrementing TailPointer forever creates a linear queue.</p></div><span class="source">June 2023 P42 Q2</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>Weaker solutions incremented TailPointer but never reset it to 0. Others searched for an empty array slot even though NumberItems was supplied to manage the queue.</p></div>
+<div class="box lesson"><span class="label">Transferable lesson</span><p>ADT variables are part of the intended model. Use them consistently instead of inventing a different management system.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Test the boundary deliberately: put TailPointer on the final index and mentally run one Enqueue.</p></div>
+<div class="box example"><span class="label">Typical wrap</span><div class="code">TailPointer = (TailPointer + 1) % len(Queue)</div></div>
+<div class="check"><span class="checkbox"></span><span>I tested full, empty and wrap-around states separately.</span></div>
+</div></article>
+
+<article class="card" data-cat="adt"><div class="head"><div><div class="tags"><span class="tag">Stack</span><span class="tag report">Adapt reused code</span></div><h2>Copied code still needs a full adaptation check</h2><p class="one">Similar stacks may have different sizes, files and identifiers.</p></div><span class="source">June 2023 P41 Q3</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>Candidates could reuse one stack pattern for another, but some forgot to change pointer names, capacity, file name, record count or the Push function called.</p></div>
+<div class="box lesson"><span class="label">Why this matters</span><p>Reusing a known pattern saves time, but a single old identifier can invalidate otherwise correct logic.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>After copying code, scan only for names and constants: array, pointer, size, file, loop count and function call.</p></div>
+<div class="check"><span class="checkbox"></span><span>No identifier from the previous task remains accidentally.</span></div>
+</div></article>
+
+<article class="card" data-cat="files"><div class="head"><div><div class="tags"><span class="tag">Return values</span><span class="tag report">State first</span></div><h2>Update state before you return</h2><p class="one">Nothing after return executes in that call.</p></div><span class="source">June 2023 P42 Q2</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>Some Dequeue solutions returned the record before updating HeadPointer and NumberItems. The first returned value could look correct while the queue state became wrong.</p></div>
+<div class="box lesson"><span class="label">Transferable lesson</span><p>An ADT operation has two jobs: produce a result and leave the structure in a valid new state.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Use the order: <strong>store result → update structure → return result.</strong></p></div>
+<div class="box example"><span class="label">Mental template</span><div class="code">item = Queue[HeadPointer]
+HeadPointer = ...
+NumberItems -= 1
+return item</div></div>
+<div class="check"><span class="checkbox"></span><span>Nothing important appears after return.</span></div>
+</div></article>
+
+<article class="card" data-cat="files"><div class="head"><div><div class="tags"><span class="tag">Function calls</span><span class="tag report">Store once</span></div><h2>Do not call a state-changing function twice</h2><p class="one">Calling it again can repeat the operation.</p></div><span class="source">June 2023 P42 Q2</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>Some candidates called Enqueue, ignored its return value, then called it again to store the result. The same item was therefore enqueued twice. Similar problems occurred with Dequeue.</p></div>
+<div class="box lesson"><span class="label">Transferable lesson</span><p>A function call can modify program state. Repeating the call is not equivalent to reading its previous result.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><div class="code">success = Enqueue(record)
+if success:
+    ...</div><p>Call once, store once, test the returned value.</p></div>
+<div class="check"><span class="checkbox"></span><span>Each Push, Pop, Enqueue or Dequeue happens exactly as many times as intended.</span></div>
+</div></article>
+
+<article class="card" data-cat="files"><div class="head"><div><div class="tags"><span class="tag">File handling</span><span class="tag report">Complete workflow</span></div><h2>File handling is more than open()</h2><p class="one">Open, read, convert, close and handle failure coherently.</p></div><span class="source">June 2023 P41/42/43</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>The reports repeatedly mention files being opened but not closed, and exception handling where close() could run even if the file had failed to open.</p></div>
+<div class="box lesson"><span class="label">Transferable lesson</span><p>Trace both the success path and failure path. Every statement should make sense in both situations.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Mentally run “file exists” and “file does not exist”. Check where the file object is created and where it is closed.</p></div>
+<div class="check"><span class="checkbox"></span><span>My file is closed only after it has opened successfully.</span></div>
+</div></article>
+
+<article class="card" data-cat="evidence"><div class="head"><div><div class="tags"><span class="tag">Evidence</span><span class="tag report">Make it markable</span></div><h2>Correct work still needs clear evidence</h2><p class="one">The examiner can only mark what is visible and readable.</p></div><span class="source">June 2023 P41/42/43</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>The reports emphasise copying program code into the evidence document as text and using screenshots for output. Tiny, clipped or unreadable output may not demonstrate the required result.</p></div>
+<div class="box lesson"><span class="label">Why this matters</span><p>Your evidence document is part of the assessment process, not an afterthought.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Inspect the page like an examiner: can you read the relevant code, see the exact test input and see the complete output?</p></div>
+<div class="check"><span class="checkbox"></span><span>The exact input and complete output required by the question are visible.</span></div>
+</div></article>
+
+<article class="card" data-cat="evidence"><div class="head"><div><div class="tags"><span class="tag">Testing</span><span class="tag report">Exact case</span></div><h2>Finish with the test data Cambridge asked for</h2><p class="one">Your own test may not expose the behaviour being assessed.</p></div><span class="source">June 2023 P41/43 Q1</span></div><div class="body">
+<div class="box context"><span class="label">Exam context</span><p>Some candidates used a different input from the one specified, so their evidence did not show the required result.</p></div>
+<div class="box lesson"><span class="label">Why exact data matters</span><p>The selected value may test duplicates, limits, empty/full states or ordering. An easier test can hide a bug.</p></div>
+<div class="box strategy"><span class="label">Student strategy</span><p>Use your own tests while developing, but make the final evidence use the exact values requested.</p></div>
+<div class="check"><span class="checkbox"></span><span>My final evidence uses the specified test data.</span></div>
+</div></article>
+
+</section>
+
+<section class="panel patterns"><h2>The recurring pattern behind the examiner reports</h2><div class="pattern-grid">
+<div class="pattern"><b>Exact specification</b><span>Names, types, parameters, pointer meanings and initial values matter.</span></div>
+<div class="pattern"><b>State consistency</b><span>Pointers and counters must retain a clear meaning after every operation.</span></div>
+<div class="pattern"><b>Function contracts</b><span>Input, parameters, output and return values are not interchangeable.</span></div>
+<div class="pattern"><b>Visible evidence</b><span>The examiner can only award marks for what the evidence clearly demonstrates.</span></div>
+</div></section>
+
+<p class="footer">Source basis: Cambridge International 9618 Principal Examiner Report, May/June 2023, especially Papers 41, 42 and 43 Practical. The comments are deliberately rewritten as student advice rather than copied from the report.</p>
 </div>
 <script>
 (()=>{
- const buttons=[...document.querySelectorAll("[data-filter]")],cards=[...document.querySelectorAll(".tip")];
+ const buttons=[...document.querySelectorAll("[data-filter]")];
+ const cards=[...document.querySelectorAll(".card[data-cat]")];
  function apply(f){buttons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.filter===f)));cards.forEach(c=>c.classList.toggle("hidden",!(f==="all"||c.dataset.cat===f)))}
  buttons.forEach(b=>b.addEventListener("click",()=>apply(b.dataset.filter)));
 })();
